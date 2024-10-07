@@ -21,7 +21,7 @@ class _OverallMenu extends State<OverallMenu> {
       void stabilityButton() {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (ctx) => const Stability(),
+            builder: (ctx) => const Safety(),
           ),
         );
       }
@@ -29,7 +29,7 @@ class _OverallMenu extends State<OverallMenu> {
       void safetyButton() {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (ctx) => const Safety(),
+            builder: (ctx) => const Stability(),
           ),
         );
       }
@@ -42,60 +42,60 @@ class _OverallMenu extends State<OverallMenu> {
         );
       }
 
-      return Row(
-        children: [
-          InkWell(
-            onTap: safetyButton,
-            child: Stack(
-              children: [
-                Image.asset('assets/img/Safety.png'),
-                const Positioned(
-                  bottom: 30,
-                  right: 10,
-                  child: Icon(
-                    Icons.cancel_sharp,
-                    color: Colors.red,
-                    size: 40,
-                  ),
-                )
-              ],
+      return Expanded(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            InkWell(
+              onTap: safetyButton,
+              child: Stack(
+                children: [
+                  Image.asset('assets/img/main/security-icon.png'),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Image.asset(
+                      "assets/img/main/no_validate.png",
+                      width: 40,
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-          InkWell(
-            onTap: stabilityButton,
-            child: Stack(
-              children: [
-                Image.asset('assets/img/Stability.png'),
-                const Positioned(
-                  bottom: 30,
-                  right: 10,
-                  child: Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                    size: 40,
-                  ),
-                )
-              ],
+            InkWell(
+              onTap: stabilityButton,
+              child: Stack(
+                children: [
+                  Image.asset('assets/img/main/stability-icon.png'),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Image.asset(
+                      "assets/img/main/validate.png",
+                      width: 40,
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-          InkWell(
-            onTap: signalButton,
-            child: Stack(
-              children: [
-                Image.asset('assets/img/Signal.png'),
-                const Positioned(
-                  bottom: 30,
-                  right: 10,
-                  child: Icon(
-                    Icons.circle_notifications,
-                    color: Colors.yellow,
-                    size: 40,
-                  ),
-                )
-              ],
+            InkWell(
+              onTap: signalButton,
+              child: Stack(
+                children: [
+                  Image.asset('assets/img/main/maps-icon.png'),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Image.asset(
+                      "assets/img/main/attention.png",
+                      width: 40,
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
     });
   }

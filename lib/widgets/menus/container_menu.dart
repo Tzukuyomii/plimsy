@@ -24,12 +24,15 @@ class _ContainerMenu extends State<ContainerMenu> {
       width: width * 0.60,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        color: const Color.fromARGB(209, 55, 98, 114),
+        color: const Color.fromRGBO(1, 86, 118, 0.8),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset('assets/img/plimsy_logo.png'),
+          Image.asset(
+            'assets/img/logos/white-logo.png',
+            width: width * 0.25,
+          ),
           SizedBox(
             width: width * 0.05,
           ),
