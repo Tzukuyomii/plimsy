@@ -15,13 +15,12 @@ class _OverallMenu extends State<OverallMenu> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      final height = constraints.maxHeight;
       final width = constraints.maxWidth;
 
       void stabilityButton() {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (ctx) => const Safety(),
+            builder: (ctx) => const Stability(),
           ),
         );
       }
@@ -29,7 +28,7 @@ class _OverallMenu extends State<OverallMenu> {
       void safetyButton() {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (ctx) => const Stability(),
+            builder: (ctx) => const Safety(),
           ),
         );
       }
@@ -46,17 +45,27 @@ class _OverallMenu extends State<OverallMenu> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            Image.asset(
+              'assets/img/logos/white-logo.png',
+              width: width * 0.4,
+            ),
+            SizedBox(
+              width: width * 0.05,
+            ),
             InkWell(
               onTap: safetyButton,
               child: Stack(
                 children: [
-                  Image.asset('assets/img/main/security-icon.png'),
+                  Image.asset(
+                    'assets/img/main/security-icon.png',
+                    width: width * 0.15,
+                  ),
                   Positioned(
                     bottom: 0,
                     right: 0,
                     child: Image.asset(
                       "assets/img/main/no_validate.png",
-                      width: 40,
+                      width: width * 0.07,
                     ),
                   )
                 ],
@@ -66,13 +75,16 @@ class _OverallMenu extends State<OverallMenu> {
               onTap: stabilityButton,
               child: Stack(
                 children: [
-                  Image.asset('assets/img/main/stability-icon.png'),
+                  Image.asset(
+                    'assets/img/main/stability-icon.png',
+                    width: width * 0.15,
+                  ),
                   Positioned(
                     bottom: 0,
                     right: 0,
                     child: Image.asset(
                       "assets/img/main/validate.png",
-                      width: 40,
+                      width: width * 0.07,
                     ),
                   )
                 ],
@@ -82,13 +94,16 @@ class _OverallMenu extends State<OverallMenu> {
               onTap: signalButton,
               child: Stack(
                 children: [
-                  Image.asset('assets/img/main/maps-icon.png'),
+                  Image.asset(
+                    'assets/img/main/maps-icon.png',
+                    width: width * 0.15,
+                  ),
                   Positioned(
                     bottom: 0,
                     right: 0,
                     child: Image.asset(
                       "assets/img/main/attention.png",
-                      width: 40,
+                      width: width * 0.07,
                     ),
                   )
                 ],

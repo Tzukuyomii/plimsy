@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/widgets/general_info/label.dart';
 import 'package:plimsy/widgets/menus/menu_calculate.dart';
+import 'package:plimsy/widgets/menus/menu_fixed.dart';
 import 'package:plimsy/widgets/menus/menu_liquids.dart';
 
 class MenuStability extends StatefulWidget {
-  const MenuStability({super.key});
+  MenuStability({super.key, required this.changeContent});
+
+  Function changeContent;
 
   @override
   State<MenuStability> createState() {
@@ -13,28 +17,52 @@ class MenuStability extends StatefulWidget {
 
 class _MenuStability extends State<MenuStability>
     with TickerProviderStateMixin {
-  late TabController _tabController;
+  String showSecondMenu = "";
+
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    // Imposta l'AnimationController per l'animazione di scorrimento
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(1.0, 0.0), // Da destra all'interno della Row
+      end: Offset.zero, // Arriva alla posizione normale
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
   }
 
-  String showSecondMenu = "";
-
-  void changeTabMenu(index) {
+  void changeTabMenu(value) {
     setState(() {
-      if (index == 0) {
-        showSecondMenu = "liquids";
-      } else if (index == 1) {
+      if (value == showSecondMenu) {
+        showSecondMenu = "";
+        _controller.reverse();
+      } else if (value == "fixed") {
         showSecondMenu = "fixed";
-      } else if (index == 2) {
+        _controller.forward();
+      } else if (value == "calculate") {
         showSecondMenu = "calculate";
+        _controller.forward();
+      } else if (value == "liquids") {
+        showSecondMenu = "liquids";
+        _controller.forward();
       } else {
         showSecondMenu = "";
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -45,71 +73,201 @@ class _MenuStability extends State<MenuStability>
     return Column(
       children: [
         AppBar(
-          toolbarHeight: height * 0.10,
-          backgroundColor: const Color.fromARGB(209, 55, 98, 114),
+          leading: InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Image.asset(
+              "assets/img/main/home.png",
+            ),
+          ),
+          toolbarHeight: height * 0.1,
+          backgroundColor: const Color.fromRGBO(1, 57, 75, 0.6),
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                "Stability Page",
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-              Expanded(
-                child: TabBar(
-                  controller: _tabController,
-                  tabs: [
-                    Tab(
-                      icon: Image.asset(
-                        "assets/img/nav-icon/liquid-weights.png",
-                        width: 50,
-                      ),
-                      child: Text(
-                        "Liquids",
-                        style: TextStyle(
-                            color: showSecondMenu == "liquids"
-                                ? Colors.black
-                                : Colors.white),
-                      ),
+              Row(
+                children: [
+                  Image.asset(
+                    'assets/img/main/stability-icon.png',
+                    width: width * 0.03,
+                  ),
+                  const Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "S",
+                          style: TextStyle(
+                              color: Colors.amber, fontWeight: FontWeight.bold),
+                        ),
+                        TextSpan(
+                          text: "tability",
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        )
+                      ],
                     ),
-                    Tab(
-                      icon: Image.asset(
-                        "assets/img/nav-icon/solid-weights.png",
-                        width: 50,
-                      ),
-                      child: Text(
-                        "Fixed Weights",
-                        style: TextStyle(
-                            color: showSecondMenu == "fixed"
-                                ? Colors.black
-                                : Colors.white),
-                      ),
-                    ),
-                    Tab(
-                      icon: Image.asset(
-                        "assets/img/nav-icon/calculation.png",
-                        width: 50,
-                      ),
-                      child: Text(
-                        "Calculation",
-                        style: TextStyle(
-                            color: showSecondMenu == "calculate"
-                                ? Colors.black
-                                : Colors.white),
-                      ),
-                    )
-                  ],
-                  onTap: (index) {
-                    changeTabMenu(index);
-                  },
-                ),
+                  ),
+                ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    child: Column(
+                      children: [
+                        Stack(
+                          children: [
+                            Image.asset(
+                              "assets/img/nav-icon/liquid-weights.png",
+                              width: width * 0.045,
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Image.asset(
+                                "assets/img/main/attention.png",
+                                width: width * 0.02,
+                              ),
+                            )
+                          ],
+                        ),
+                        Text(
+                          "Liquids",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: showSecondMenu == "liquids"
+                                  ? Colors.black
+                                  : Colors.white),
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      changeTabMenu("liquids");
+                    },
+                  ),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                    child: showSecondMenu == "liquids"
+                        ? SlideTransition(
+                            position: _slideAnimation,
+                            child: MenuLiquids(
+                              changeContent: widget.changeContent,
+                            ),
+                          )
+                        : Container(),
+                  ),
+                  SizedBox(
+                    width: width * 0.05,
+                    child: Image.asset(
+                      "assets/img/nav-icon/arrows.png",
+                      width: width * 0.025,
+                    ),
+                  ),
+                  InkWell(
+                    child: Column(
+                      children: [
+                        Stack(
+                          children: [
+                            Image.asset(
+                              "assets/img/nav-icon/solid-weights.png",
+                              width: width * 0.04,
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Image.asset(
+                                "assets/img/main/attention.png",
+                                width: width * 0.02,
+                              ),
+                            )
+                          ],
+                        ),
+                        Text(
+                          "Fixed weights",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: showSecondMenu == "fixed"
+                                  ? Colors.black
+                                  : Colors.white),
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      changeTabMenu("fixed");
+                    },
+                  ),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                    child: showSecondMenu == "fixed"
+                        ? SlideTransition(
+                            position: _slideAnimation,
+                            child: const MenuFixed(),
+                          )
+                        : Container(),
+                  ),
+                  SizedBox(
+                    width: width * 0.05,
+                    child: Image.asset(
+                      "assets/img/nav-icon/arrows.png",
+                      width: width * 0.025,
+                    ),
+                  ),
+                  InkWell(
+                    child: Column(
+                      children: [
+                        Stack(
+                          children: [
+                            Image.asset(
+                              "assets/img/nav-icon/calculation.png",
+                              width: width * 0.04,
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Image.asset(
+                                "assets/img/main/attention.png",
+                                width: width * 0.02,
+                              ),
+                            )
+                          ],
+                        ),
+                        Text(
+                          "Calculation",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: showSecondMenu == "calculate"
+                                  ? Colors.black
+                                  : Colors.white),
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      changeTabMenu("calculate");
+                    },
+                  ),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                    child: showSecondMenu == "calculate"
+                        ? SlideTransition(
+                            position: _slideAnimation,
+                            child: const MenuCalculate(),
+                          )
+                        : Container(),
+                  ),
+                ],
+              ),
+              const Label()
             ],
           ),
-        ),
-        if (showSecondMenu == "liquids") const MenuLiquids(),
-        //if (showSecondMenu == "fixed") const MenuFixed(),
-        if (showSecondMenu == "calculate") const MenuCalculate()
+        )
       ],
     );
   }

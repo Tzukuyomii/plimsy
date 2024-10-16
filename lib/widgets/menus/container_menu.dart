@@ -1,12 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:plimsy/widgets/login.dart';
+import 'package:plimsy/widgets/general_info/general_info.dart';
 import 'package:plimsy/widgets/menus/overall_menu.dart';
 
+// ignore: must_be_immutable
 class ContainerMenu extends StatefulWidget {
-  const ContainerMenu({super.key, required this.isLogin});
+  ContainerMenu(
+      {super.key,
+      required this.containerWidth,
+      required this.containerHeight,
+      required this.isOpen,
+      required this.fadeAnimation,
+      required this.showContent,
+      required this.onDialogOpenChange});
 
-  final bool isLogin;
+  late Animation<double> fadeAnimation;
+  final Function onDialogOpenChange;
 
+  double containerWidth;
+  double containerHeight;
+  bool isOpen;
+  bool showContent;
   @override
   State<ContainerMenu> createState() {
     return _ContainerMenu();
@@ -16,31 +29,30 @@ class ContainerMenu extends StatefulWidget {
 class _ContainerMenu extends State<ContainerMenu> {
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-      height: height * 0.20,
-      width: width * 0.60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: const Color.fromRGBO(1, 86, 118, 0.8),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            'assets/img/logos/white-logo.png',
-            width: width * 0.25,
-          ),
-          SizedBox(
-            width: width * 0.05,
-          ),
-          Expanded(
-            child: widget.isLogin ? const Login() : const OverallMenu(),
-          )
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = MediaQuery.of(context).size.width;
+        final height = MediaQuery.of(context).size.height;
+
+        return AnimatedContainer(
+            curve: Curves.easeInOut,
+            duration: const Duration(milliseconds: 500),
+            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+            height: widget.containerHeight,
+            width: widget.containerWidth,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: const Color.fromRGBO(1, 86, 118, 0.8),
+            ),
+            child: FadeTransition(
+              opacity: widget.fadeAnimation,
+              child: widget.showContent
+                  ? GeneralInfo(
+                      changeSize: widget.onDialogOpenChange,
+                    )
+                  : const OverallMenu(),
+            ));
+      },
     );
   }
 }

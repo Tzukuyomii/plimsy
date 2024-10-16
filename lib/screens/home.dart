@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/widgets/menus/container_menu.dart';
-import 'package:plimsy/widgets/general_info.dart';
+import 'package:plimsy/widgets/general_info/general_info_container.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,17 +11,75 @@ class Home extends StatefulWidget {
   }
 }
 
-class _Home extends State<Home> {
-  bool isDialogOpen = true;
+class _Home extends State<Home> with TickerProviderStateMixin {
+  bool isOpen = false;
+  bool showContent = true;
 
-  void _setDialogState(bool isOpen) {
-    setState(() {
-      isDialogOpen = isOpen;
-    });
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // AnimationController per gestire le animazioni.
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+
+    // Definizione dell'animazione di opacità.
+    _fadeAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeIn,
+    );
+  }
+
+  void changeSize() {
+    if (isOpen) {
+      // Se il menu è aperto, nascondi il contenuto espanso con fade-out e riduci
+      _controller.reverse().then((_) {
+        setState(() {
+          showContent = false;
+          isOpen = false;
+        });
+        Future.delayed(const Duration(milliseconds: 500), () {
+          _controller.forward();
+        });
+      });
+    } else {
+      // Se il menu è chiuso, nascondi il contenuto ridotto con fade-out e espandi
+      _controller.reverse().then((_) {
+        setState(() {
+          isOpen = true;
+          showContent = true;
+        });
+        Future.delayed(const Duration(milliseconds: 500), () {
+          _controller.forward().then((_) {});
+        });
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
+    double containerWidth() {
+      return isOpen ? width * 0.8 : width * 0.5;
+    }
+
+    double containerHeight() {
+      return isOpen ? height * 0.8 : height * 0.2;
+    }
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -44,17 +102,21 @@ class _Home extends State<Home> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    if (isDialogOpen)
-                      const ContainerMenu(
-                        isLogin: false,
-                      ),
+                    ContainerMenu(
+                      containerHeight: containerHeight(),
+                      containerWidth: containerWidth(),
+                      isOpen: isOpen,
+                      fadeAnimation: _fadeAnimation,
+                      showContent: showContent,
+                      onDialogOpenChange: changeSize,
+                    ),
                   ],
                 ),
                 Positioned(
                   bottom: 5,
                   right: 5,
-                  child: GeneralInfo(
-                    onDialogOpenChange: _setDialogState,
+                  child: GeneralInfoContainer(
+                    onDialogOpenChange: changeSize,
                   ),
                 )
               ],

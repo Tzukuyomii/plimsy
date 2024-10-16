@@ -68,6 +68,8 @@ flutter:
     - assets/img/main/no_validate.png
     - assets/img/main/attention.png
     - assets/img/main/validate.png
+    - assets/img/main/info-icon.png
+    - assets/img/main/home.png
     - assets/img/nav-icon/liquid-weights.png
     - assets/img/nav-icon/arrows.png
     - assets/img/nav-icon/calculation.png

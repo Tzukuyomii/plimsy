@@ -19,7 +19,7 @@ class Safety extends StatelessWidget {
             ],
           ),
         ),
-        child: const MenuSafety(),
+        child: Container(),
       ),
     );
   }

@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
 
 class MenuLiquids extends StatelessWidget {
-  const MenuLiquids({super.key});
+  MenuLiquids({super.key, required this.changeContent});
+
+  Function changeContent;
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraint) {
-      return Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(
-              width: 40,
-            ),
-            InkWell(
-                child: Column(
+    final width = MediaQuery.of(context).size.width;
+
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: width * 0.02,
+          ),
+          InkWell(
+            onTap: () {
+              changeContent("Tanks");
+            },
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Image.asset(
                   "assets/img/tanks-page/tanks-icon.png",
-                  width: 30,
+                  width: width * 0.025,
                 ),
                 const Text(
                   "Tanks",
@@ -29,16 +35,20 @@ class MenuLiquids extends StatelessWidget {
                       color: Colors.white),
                 ),
               ],
-            )),
-            const SizedBox(
-              width: 30,
             ),
-            InkWell(
-                child: Column(
+          ),
+          SizedBox(
+            width: width * 0.01,
+          ),
+          InkWell(
+            onTap: () {
+              changeContent("Pools");
+            },
+            child: Column(
               children: [
                 Image.asset(
                   "assets/img/tanks-page/pools-icon.png",
-                  width: 30,
+                  width: width * 0.025,
                 ),
                 const Text(
                   "Pools",
@@ -48,10 +58,10 @@ class MenuLiquids extends StatelessWidget {
                       color: Colors.white),
                 ),
               ],
-            ))
-          ],
-        ),
-      );
-    });
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
