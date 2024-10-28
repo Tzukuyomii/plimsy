@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/screens/chooseVessel.dart';
 import 'package:plimsy/screens/home.dart';
 import 'package:plimsy/widgets/input_login.dart';
 
@@ -11,11 +12,20 @@ class Login extends StatelessWidget {
     final passwordController = TextEditingController();
 
     void accediButton() {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (ctx) => const Home(),
-        ),
-      );
+      print(usernameController.text);
+      if (usernameController.text == "GiovanniR") {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (ctx) => ChooseVessel(),
+          ),
+        );
+      } else {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (ctx) => const Home(),
+          ),
+        );
+      }
     }
 
     return LayoutBuilder(builder: (context, constraints) {

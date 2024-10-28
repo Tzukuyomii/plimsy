@@ -13,7 +13,7 @@ class Home extends StatefulWidget {
 
 class _Home extends State<Home> with TickerProviderStateMixin {
   bool isOpen = false;
-  bool showContent = true;
+  bool showContent = false;
 
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
@@ -33,6 +33,12 @@ class _Home extends State<Home> with TickerProviderStateMixin {
       parent: _controller,
       curve: Curves.easeIn,
     );
+
+    if (isOpen) {
+      _controller.reverse();
+    } else {
+      _controller.forward();
+    }
   }
 
   void changeSize() {
@@ -99,6 +105,22 @@ class _Home extends State<Home> with TickerProviderStateMixin {
             width: double.infinity,
             child: Stack(
               children: [
+                Positioned(
+                  left: 5,
+                  child: CircleAvatar(
+                    backgroundColor: const Color.fromRGBO(1, 86, 118, 0.8),
+                    radius: 30,
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(
+                        Icons.logout,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

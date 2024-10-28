@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:plimsy/widgets/menus/menu_stability.dart';
-import 'package:plimsy/widgets/tanks.dart';
+import 'package:plimsy/widgets/staiblity/menu_stability.dart';
+import 'package:plimsy/widgets/staiblity/liquids/tanks.dart';
 
 class Stability extends StatefulWidget {
   const Stability({super.key});

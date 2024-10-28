@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/widgets/general_info/label.dart';
-import 'package:plimsy/widgets/menus/menu_calculate.dart';
-import 'package:plimsy/widgets/menus/menu_fixed.dart';
-import 'package:plimsy/widgets/menus/menu_liquids.dart';
+import 'package:plimsy/widgets/staiblity/menu_calculate.dart';
+import 'package:plimsy/widgets/staiblity/menu_fixed.dart';
+import 'package:plimsy/widgets/staiblity/menu_liquids.dart';
 
 class MenuStability extends StatefulWidget {
   MenuStability({super.key, required this.changeContent});
@@ -74,6 +74,9 @@ class _MenuStability extends State<MenuStability>
       children: [
         AppBar(
           leading: InkWell(
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            hoverColor: Colors.transparent,
             onTap: () {
               Navigator.pop(context);
             },
@@ -115,6 +118,9 @@ class _MenuStability extends State<MenuStability>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
                     child: Column(
                       children: [
                         Stack(
@@ -168,6 +174,9 @@ class _MenuStability extends State<MenuStability>
                     ),
                   ),
                   InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
                     child: Column(
                       children: [
                         Stack(
@@ -219,6 +228,9 @@ class _MenuStability extends State<MenuStability>
                     ),
                   ),
                   InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
                     child: Column(
                       children: [
                         Stack(
