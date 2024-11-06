@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/widgets/3d_model/model3d_viewer.dart';
+import 'package:plimsy/widgets/3d_model/solar_system.dart';
 import 'package:plimsy/widgets/menus/container_menu.dart';
 import 'package:plimsy/widgets/general_info/general_info_container.dart';
 
@@ -105,6 +107,9 @@ class _Home extends State<Home> with TickerProviderStateMixin {
             width: double.infinity,
             child: Stack(
               children: [
+                const Center(
+                  child: Model3DViewer(),
+                ),
                 Positioned(
                   left: 5,
                   child: CircleAvatar(

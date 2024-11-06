@@ -24,21 +24,19 @@ class _GeneralInfoContainer extends State<GeneralInfoContainer> {
         borderRadius: BorderRadius.circular(16),
         color: const Color.fromRGBO(1, 86, 118, 0.8),
       ),
-      child: Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Expanded(
-              child: Label(),
-            ),
-            InkWell(
-              onTap: () {
-                widget.onDialogOpenChange();
-              },
-              child: Image.asset("assets/img/main/info-icon.png"),
-            )
-          ],
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Expanded(
+            child: Label(),
+          ),
+          InkWell(
+            onTap: () {
+              widget.onDialogOpenChange();
+            },
+            child: Image.asset("assets/img/main/info-icon.png"),
+          )
+        ],
       ),
     );
   }
