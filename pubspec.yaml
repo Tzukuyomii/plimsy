@@ -36,8 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_fonts: ^4.0.4
   intl: ^0.19.0
-  three_dart: 0.0.14
-  three_dart_jsm: 0.0.7
+  flutter_3d_controller: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -85,9 +84,6 @@ flutter:
     - assets/img/info-panel/help-icon.png
     - assets/img/info-panel/contact-us-icon.png
     - assets/img/3d-model/intact-model.gltf
-    - assets/img/3d-model/triangle.gltf
-    - assets/img/3d-model/prova.glb
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
