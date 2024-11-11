@@ -216,7 +216,9 @@ class _MenuStability extends State<MenuStability>
                     child: showSecondMenu == "fixed"
                         ? SlideTransition(
                             position: _slideAnimation,
-                            child: const MenuFixed(),
+                            child: MenuFixed(
+                              changeContent: widget.changeContent,
+                            ),
                           )
                         : Container(),
                   ),
@@ -270,7 +272,9 @@ class _MenuStability extends State<MenuStability>
                     child: showSecondMenu == "calculate"
                         ? SlideTransition(
                             position: _slideAnimation,
-                            child: const MenuCalculate(),
+                            child: MenuCalculate(
+                              changeContent: widget.changeContent,
+                            ),
                           )
                         : Container(),
                   ),

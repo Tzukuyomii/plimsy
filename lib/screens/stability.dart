@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/widgets/staiblity/calculation/draft.dart';
+import 'package:plimsy/widgets/staiblity/fixed/fixed.dart';
+import 'package:plimsy/widgets/staiblity/liquids/pools.dart';
 import 'package:plimsy/widgets/staiblity/menu_stability.dart';
 import 'package:plimsy/widgets/staiblity/liquids/tanks.dart';
 
@@ -40,7 +43,10 @@ class _Stability extends State<Stability> {
             MenuStability(
               changeContent: changeContent,
             ),
-            if (showContent == "Tanks") Tanks()
+            if (showContent == "Tanks") const Tanks(),
+            if (showContent == "Pools") const Pools(),
+            if (showContent == "Fixed") const Fixed(),
+            if (showContent == "Draft") const Draft(),
           ],
         ),
       ),
