@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/widgets/staiblity/trapezoid_painter.dart';
 
 class MenuFixed extends StatefulWidget {
   MenuFixed(
@@ -51,16 +52,11 @@ class _MenuFixed extends State<MenuFixed> with TickerProviderStateMixin {
           SizedBox(
             width: width * 0.02,
           ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: widget.showContent == "Fixed"
-                      ? Colors.black
-                      : Colors.transparent,
-                  width: 2,
-                ),
-              ),
+          CustomPaint(
+            painter: TrapezoidBorderPainter(
+              widget.showContent == "Fixed"
+                  ? Colors.yellow
+                  : Colors.transparent,
             ),
             child: InkWell(
               onTapDown: (_) {
@@ -105,4 +101,23 @@ class _MenuFixed extends State<MenuFixed> with TickerProviderStateMixin {
       ),
     );
   }
+}
+
+class TrapezoidClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final Path path = Path();
+    path.lineTo(0, size.height - 2); // Inizia dall'angolo in basso a sinistra
+    path.lineTo(
+        size.width * 0.1, size.height); // Crea il primo angolo del trapezio
+    path.lineTo(
+        size.width * 0.9, size.height); // Crea il secondo angolo del trapezio
+    path.lineTo(size.width, size.height - 2); // Angolo in basso a destra
+    path.lineTo(size.width, 0); // Torna in alto a destra
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

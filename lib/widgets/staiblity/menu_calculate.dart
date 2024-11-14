@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/widgets/staiblity/trapezoid_painter.dart';
 
 class MenuCalculate extends StatefulWidget {
   MenuCalculate(
@@ -53,16 +54,11 @@ class _MenuCalculate extends State<MenuCalculate>
           SizedBox(
             width: width * 0.02,
           ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: widget.showContent == "Draft"
-                      ? Colors.black
-                      : Colors.transparent,
-                  width: 2,
-                ),
-              ),
+          CustomPaint(
+            painter: TrapezoidBorderPainter(
+              widget.showContent == "Draft"
+                  ? Colors.yellow
+                  : Colors.transparent,
             ),
             child: InkWell(
               onTapDown: (_) {
