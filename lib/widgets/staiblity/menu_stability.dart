@@ -5,8 +5,10 @@ import 'package:plimsy/widgets/staiblity/menu_fixed.dart';
 import 'package:plimsy/widgets/staiblity/menu_liquids.dart';
 
 class MenuStability extends StatefulWidget {
-  MenuStability({super.key, required this.changeContent});
+  MenuStability(
+      {super.key, required this.changeContent, required this.showContent});
 
+  String showContent;
   Function changeContent;
 
   @override
@@ -45,12 +47,15 @@ class _MenuStability extends State<MenuStability>
         showSecondMenu = "";
         _controller.reverse();
       } else if (value == "fixed") {
+        widget.changeContent("Fixed");
         showSecondMenu = "fixed";
         _controller.forward();
       } else if (value == "calculate") {
+        widget.changeContent("Draft");
         showSecondMenu = "calculate";
         _controller.forward();
       } else if (value == "liquids") {
+        widget.changeContent("Tanks");
         showSecondMenu = "liquids";
         _controller.forward();
       } else {
@@ -139,14 +144,12 @@ class _MenuStability extends State<MenuStability>
                             )
                           ],
                         ),
-                        Text(
+                        const Text(
                           "Liquids",
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: showSecondMenu == "liquids"
-                                  ? Colors.black
-                                  : Colors.white),
+                              color: Colors.white),
                         ),
                       ],
                     ),
@@ -162,6 +165,7 @@ class _MenuStability extends State<MenuStability>
                             position: _slideAnimation,
                             child: MenuLiquids(
                               changeContent: widget.changeContent,
+                              showContent: widget.showContent,
                             ),
                           )
                         : Container(),
@@ -195,14 +199,12 @@ class _MenuStability extends State<MenuStability>
                             )
                           ],
                         ),
-                        Text(
-                          "Fixed weights",
+                        const Text(
+                          "Solid weights",
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: showSecondMenu == "fixed"
-                                  ? Colors.black
-                                  : Colors.white),
+                              color: Colors.white),
                         ),
                       ],
                     ),
@@ -218,6 +220,7 @@ class _MenuStability extends State<MenuStability>
                             position: _slideAnimation,
                             child: MenuFixed(
                               changeContent: widget.changeContent,
+                              showContent: widget.showContent,
                             ),
                           )
                         : Container(),
@@ -251,14 +254,12 @@ class _MenuStability extends State<MenuStability>
                             )
                           ],
                         ),
-                        Text(
+                        const Text(
                           "Calculation",
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: showSecondMenu == "calculate"
-                                  ? Colors.black
-                                  : Colors.white),
+                              color: Colors.white),
                         ),
                       ],
                     ),
@@ -274,6 +275,7 @@ class _MenuStability extends State<MenuStability>
                             position: _slideAnimation,
                             child: MenuCalculate(
                               changeContent: widget.changeContent,
+                              showContent: widget.showContent,
                             ),
                           )
                         : Container(),

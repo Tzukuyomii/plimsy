@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class MenuCalculate extends StatefulWidget {
-  MenuCalculate({super.key, required this.changeContent});
+  MenuCalculate(
+      {super.key, required this.changeContent, required this.showContent});
 
+  String showContent;
   Function changeContent;
 
   @override
@@ -41,50 +43,64 @@ class _MenuCalculate extends State<MenuCalculate>
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
 
-    return Expanded(
+    return SizedBox(
+      height: height * 0.1,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
             width: width * 0.02,
           ),
-          InkWell(
-            onTapDown: (_) {
-              _controllerCalculate
-                  .forward(); // Esegue l'animazione di pressione
-            },
-            onTapUp: (_) {
-              _controllerCalculate
-                  .reverse(); // Ritorna alla dimensione normale al rilascio del tap
-            },
-            onTapCancel: () {
-              _controllerCalculate
-                  .reverse(); // Se l'utente annulla il tap, ripristina l'animazione
-            },
-            onTap: () {
-              widget.changeContent("Draft");
-            },
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-            child: ScaleTransition(
-              scale: _animationCalculate,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.asset(
-                    "assets/img/calculations-main/loadline-status.png",
-                    width: width * 0.025,
-                  ),
-                  const Text(
-                    "Draft",
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                ],
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: widget.showContent == "Draft"
+                      ? Colors.black
+                      : Colors.transparent,
+                  width: 2,
+                ),
+              ),
+            ),
+            child: InkWell(
+              onTapDown: (_) {
+                _controllerCalculate
+                    .forward(); // Esegue l'animazione di pressione
+              },
+              onTapUp: (_) {
+                _controllerCalculate
+                    .reverse(); // Ritorna alla dimensione normale al rilascio del tap
+              },
+              onTapCancel: () {
+                _controllerCalculate
+                    .reverse(); // Se l'utente annulla il tap, ripristina l'animazione
+              },
+              onTap: () {
+                widget.changeContent("Draft");
+              },
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              child: ScaleTransition(
+                scale: _animationCalculate,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      "assets/img/calculations-main/loadline-status.png",
+                      width: width * 0.025,
+                    ),
+                    const Text(
+                      "Draft",
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

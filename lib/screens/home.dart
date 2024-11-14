@@ -102,8 +102,8 @@ class _Home extends State<Home> with TickerProviderStateMixin {
         ),
         child: SafeArea(
           child: SizedBox(
-            height: double.infinity,
-            width: double.infinity,
+            height: height,
+            width: width,
             child: Stack(
               children: [
                 const Center(

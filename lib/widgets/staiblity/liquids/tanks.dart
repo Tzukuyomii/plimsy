@@ -153,49 +153,47 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: liquidsOnBoards.map((tank) {
-                return Stack(
-                  children: [
-                    ClipRRect(
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      selectedTank = tank.prefix;
+                    });
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        width: width * 0.1,
-                        height: height * 0.07,
-                        child: AnimatedBuilder(
-                          animation: _controller,
-                          builder: (context, child) {
-                            return CustomPaint(
-                              painter: LiquidPainter(
-                                  _controller.value, selectColor(tank.prefix)),
-                            );
-                          },
-                        ),
-                      ),
+                      color: Colors.black,
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: const Color.fromRGBO(0, 0, 0, 0.5),
-                      ),
-                      width: width * 0.1,
-                      height: height * 0.07,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            selectedTank = tank.prefix;
-                          });
-                        },
-                        child: Center(
-                          child: Text(
+                    width: width * 0.1,
+                    height: height * 0.07,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          AnimatedBuilder(
+                            animation: _controller,
+                            builder: (context, child) {
+                              return CustomPaint(
+                                painter: LiquidPainter(
+                                  _controller.value,
+                                  selectColor(tank.prefix),
+                                ),
+                                child: const SizedBox.expand(),
+                              );
+                            },
+                          ),
+                          Text(
                             tank.prefix,
                             style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16),
                           ),
-                        ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 );
               }).toList(),
             ),

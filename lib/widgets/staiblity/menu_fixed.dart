@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class MenuFixed extends StatefulWidget {
-  MenuFixed({super.key, required this.changeContent});
+  MenuFixed(
+      {super.key, required this.changeContent, required this.showContent});
 
+  String showContent;
   Function changeContent;
   @override
   State<MenuFixed> createState() {
@@ -39,49 +41,63 @@ class _MenuFixed extends State<MenuFixed> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
 
-    return Expanded(
+    return SizedBox(
+      height: height * 0.1,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
             width: width * 0.02,
           ),
-          InkWell(
-            onTapDown: (_) {
-              _controllerFixed.forward(); // Esegue l'animazione di pressione
-            },
-            onTapUp: (_) {
-              _controllerFixed
-                  .reverse(); // Ritorna alla dimensione normale al rilascio del tap
-            },
-            onTapCancel: () {
-              _controllerFixed
-                  .reverse(); // Se l'utente annulla il tap, ripristina l'animazione
-            },
-            onTap: () {
-              widget.changeContent("Fixed");
-            },
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-            child: ScaleTransition(
-              scale: _animationFixed,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.asset(
-                    "assets/img/solid-weights/fixedweights.png",
-                    width: width * 0.025,
-                  ),
-                  const Text(
-                    "Fixed",
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                ],
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: widget.showContent == "Fixed"
+                      ? Colors.black
+                      : Colors.transparent,
+                  width: 2,
+                ),
+              ),
+            ),
+            child: InkWell(
+              onTapDown: (_) {
+                _controllerFixed.forward(); // Esegue l'animazione di pressione
+              },
+              onTapUp: (_) {
+                _controllerFixed
+                    .reverse(); // Ritorna alla dimensione normale al rilascio del tap
+              },
+              onTapCancel: () {
+                _controllerFixed
+                    .reverse(); // Se l'utente annulla il tap, ripristina l'animazione
+              },
+              onTap: () {
+                widget.changeContent("Fixed");
+              },
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              child: ScaleTransition(
+                scale: _animationFixed,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      "assets/img/solid-weights/fixedweights.png",
+                      width: width * 0.025,
+                    ),
+                    const Text(
+                      "Fixed",
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
