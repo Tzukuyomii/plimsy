@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/widgets/login.dart';
-import 'package:plimsy/widgets/menus/container_menu.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});

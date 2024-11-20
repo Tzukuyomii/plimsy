@@ -212,10 +212,7 @@ class _Draft extends State<Draft> with TickerProviderStateMixin {
                           BorderRadius.vertical(bottom: Radius.circular(8)),
                     ),
                     width: double.infinity,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: selectContent(title),
-                    ),
+                    child: selectContent(title),
                   ),
                 ),
             ],

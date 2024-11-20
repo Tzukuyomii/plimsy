@@ -84,6 +84,13 @@ flutter:
     - assets/img/info-panel/go-back-icon.png
     - assets/img/info-panel/help-icon.png
     - assets/img/info-panel/contact-us-icon.png
+    - assets/img/calculations-main/yacht-top-icon.png
+    - assets/img/calculations-main/trim-icon(placeholder).png
+    - assets/img/calculations-main/top-wpa-icon.png
+    - assets/img/calculations-main/heel-icon.png
+    - assets/img/calculations-main/icon-status-ready.png
+    - assets/img/calculations-main/icon-status-waiting.png
+    - assets/img/calculations-main/icon-status-warning.png
     - assets/img/3d-model/intact-model.gltf
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

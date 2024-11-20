@@ -42,18 +42,20 @@ class _Stability extends State<Stability> {
             ],
           ),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            MenuStability(
-              changeContent: changeContent,
-              showContent: showContent,
-            ),
-            if (showContent == "Tanks") const Tanks(),
-            if (showContent == "Pools") const Pools(),
-            if (showContent == "Fixed") const Fixed(),
-            if (showContent == "Draft") const Draft(),
-          ],
+        child: Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              MenuStability(
+                changeContent: changeContent,
+                showContent: showContent,
+              ),
+              if (showContent == "Tanks") const Tanks(),
+              if (showContent == "Pools") const Pools(),
+              if (showContent == "Fixed") const Fixed(),
+              if (showContent == "Draft") const Draft(),
+            ],
+          ),
         ),
       ),
     );
