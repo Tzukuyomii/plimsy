@@ -93,13 +93,13 @@ class _DynamicRadioButtonsState extends State<DynamicRadioButtons> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Current: 17229.8 lt.',
+                  'Current: 0.0 lt.',
                   style: TextStyle(
                       color: Colors.lightBlueAccent.shade100,
                       fontSize: width * 0.01),
                 ),
                 Text(
-                  'Max cap.: 18269.8 lt.',
+                  'Max cap: 0.0 lt.',
                   style: TextStyle(
                       color: Colors.lightBlueAccent.shade100,
                       fontSize: width * 0.01),
