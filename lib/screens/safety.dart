@@ -6,6 +6,8 @@ class Safety extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -19,7 +21,39 @@ class Safety extends StatelessWidget {
             ],
           ),
         ),
-        child: Container(),
+        child: SafeArea(
+          child: SizedBox(
+            height: height,
+            width: width,
+            child: Stack(
+              children: [
+                Positioned(
+                  left: 5,
+                  child: CircleAvatar(
+                    backgroundColor: const Color.fromRGBO(1, 86, 118, 0.8),
+                    radius: 30,
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(
+                        Icons.logout,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    "Work in progress...",
+                    style:
+                        TextStyle(color: Colors.white, fontSize: width * 0.07),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
