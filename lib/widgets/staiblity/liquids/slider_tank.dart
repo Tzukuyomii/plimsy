@@ -18,7 +18,7 @@ class SliderTank extends StatefulWidget {
 class _SliderTank extends State<SliderTank> {
   List _buildRowContent(String selected) {
     switch (selected) {
-      case 'DIRTY OIL':
+      case 'OIL':
         return mockTanks.oil;
       //  [
       //   const Icon(Icons.star, color: Colors.yellow),
@@ -58,6 +58,12 @@ class _SliderTank extends State<SliderTank> {
       //   const Text('Contenuto per Elemento 5',
       //       style: TextStyle(fontSize: 18, color: Colors.lightBlue)),
       // ];
+      case 'SEWAGE':
+        return mockTanks.sewage;
+
+      case 'POOLS':
+        return mockPoolsTanks;
+
       default:
         return [const Text('Nessun elemento selezionato')];
     }
@@ -70,7 +76,7 @@ class _SliderTank extends State<SliderTank> {
     return Container(
       height: height * 0.3,
       decoration: BoxDecoration(
-        color: Color.fromRGBO(0, 0, 0, 0.4),
+        color: const Color.fromRGBO(0, 0, 0, 0.4),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: widget.selectColor(widget.selectedTank),

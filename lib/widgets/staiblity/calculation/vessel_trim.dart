@@ -62,14 +62,12 @@ class _VesselTrim extends State<VesselTrim> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.grey,
-                            size: width * 0.03,
-                          ),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          color: _trimValue < 0
+                              ? const Color.fromARGB(255, 248, 18, 1)
+                              : Colors.grey,
+                          size: width * 0.03,
                         ),
                         Text(
                           "$_trimValue",
@@ -78,14 +76,12 @@ class _VesselTrim extends State<VesselTrim> {
                             color: Colors.white, // Colore del testo
                           ),
                         ),
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.arrow_drop_down,
-                            color: const Color.fromARGB(255, 248, 18, 1),
-                            size: width * 0.03,
-                          ),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          color: _trimValue > 0
+                              ? const Color.fromARGB(255, 248, 18, 1)
+                              : Colors.grey,
+                          size: width * 0.03,
                         ),
                       ],
                     ),
@@ -149,12 +145,13 @@ class _VesselTrim extends State<VesselTrim> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {},
-                        icon: Icon(
+                      Transform.rotate(
+                        angle: 0.5 * 3.14159,
+                        child: Icon(
                           Icons.arrow_drop_down,
-                          color: Colors.grey,
+                          color: _heelValue < 0
+                              ? const Color.fromARGB(255, 248, 18, 1)
+                              : Colors.grey,
                           size: width * 0.03,
                         ),
                       ),
@@ -165,12 +162,13 @@ class _VesselTrim extends State<VesselTrim> {
                           color: Colors.white, // Colore del testo
                         ),
                       ),
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {},
-                        icon: Icon(
+                      Transform.rotate(
+                        angle: 1.5 * 3.14159, // Rotate 270 degrees (pi/2 * 3)
+                        child: Icon(
                           Icons.arrow_drop_down,
-                          color: const Color.fromARGB(255, 248, 18, 1),
+                          color: _heelValue > 0
+                              ? const Color.fromARGB(255, 248, 18, 1)
+                              : Colors.grey,
                           size: width * 0.03,
                         ),
                       ),

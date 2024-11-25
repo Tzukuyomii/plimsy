@@ -91,6 +91,17 @@ flutter:
     - assets/img/calculations-main/icon-status-ready.png
     - assets/img/calculations-main/icon-status-waiting.png
     - assets/img/calculations-main/icon-status-warning.png
+    - assets/img/calculations-main/loadline-status.png
+    - assets/img/liquid-weights-pic/fresh_w.png
+    - assets/img/liquid-weights-pic/fuel.png
+    - assets/img/liquid-weights-pic/oil.png
+    - assets/img/liquid-weights-pic/pool.png
+    - assets/img/liquid-weights-pic/sewage.png
+    - assets/img/liquid-weights-pic/urea.png
+    - assets/img/fixed-dw-ga/main-deck.png
+    - assets/img/fixed-dw-ga/lower-deck.png
+    - assets/img/fixed-dw-ga/observation-deck.png
+    - assets/img/fixed-dw-ga/upper-deck.png
     - assets/img/3d-model/intact-model.gltf
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

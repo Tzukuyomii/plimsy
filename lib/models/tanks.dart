@@ -12,8 +12,8 @@ class Tanks {
   final List<Tank> sewage;
 }
 
-class PoolsModel {
-  const PoolsModel(this.pools);
+class Pools {
+  const Pools(this.pools);
 
   final List<Tank> pools;
 }

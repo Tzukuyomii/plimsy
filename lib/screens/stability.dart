@@ -17,6 +17,24 @@ class Stability extends StatefulWidget {
 class _Stability extends State<Stability> {
   String showContent = "";
 
+  Color selectColor(String prefix) {
+    if (prefix == "OIL") {
+      return Colors.yellow;
+    } else if (prefix == "FRESH WATER") {
+      return Colors.blue.shade100;
+    } else if (prefix == "UREA") {
+      return Colors.green.shade200;
+    } else if (prefix == "FUEL") {
+      return Colors.red.shade100;
+    } else if (prefix == "POOL" || prefix == "POOLS") {
+      return Colors.lightBlueAccent.shade100;
+    } else if (prefix == "SEWAGE") {
+      return Colors.teal.shade100;
+    } else {
+      return Colors.white;
+    }
+  }
+
   void changeContent(String value) {
     setState(() {
       showContent = value;
@@ -50,8 +68,8 @@ class _Stability extends State<Stability> {
                 changeContent: changeContent,
                 showContent: showContent,
               ),
-              if (showContent == "Tanks") const Tanks(),
-              if (showContent == "Pools") const Pools(),
+              if (showContent == "Tanks") Tanks(selectColor: selectColor),
+              if (showContent == "Pools") Pools(selectColor: selectColor),
               if (showContent == "Fixed") const Fixed(),
               if (showContent == "Draft") const Draft(),
             ],

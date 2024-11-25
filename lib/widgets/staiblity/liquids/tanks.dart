@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:plimsy/data/liquids_data.dart';
 import 'package:plimsy/models/tank.dart';
 import 'package:plimsy/widgets/staiblity/liquids/liquid_painter.dart';
+import 'package:plimsy/widgets/staiblity/liquids/liquids_on_board_container.dart';
 import 'package:plimsy/widgets/staiblity/liquids/slider_tank.dart';
 
 class Tanks extends StatefulWidget {
-  const Tanks({super.key});
+  Tanks({super.key, required this.selectColor});
+
+  Function selectColor;
 
   @override
   State<Tanks> createState() {
@@ -14,8 +17,9 @@ class Tanks extends StatefulWidget {
 }
 
 class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
-  String selectedTank = "";
+  String selectedTank = "FUEL";
   late AnimationController _controller;
+  String img = "assets/img/liquid-weights-pic/fuel.png";
 
   @override
   void initState() {
@@ -34,46 +38,27 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-  Color selectColor(String prefix) {
-    if (prefix == "DIRTY OIL") {
-      return Colors.yellow;
-    } else if (prefix == "FRESH WATER") {
-      return Colors.blueAccent;
-    } else if (prefix == "UREA") {
-      return Colors.green;
-    } else if (prefix == "FUEL") {
-      return Colors.pinkAccent;
-    } else if (prefix == "POOL") {
-      return Colors.lightBlue;
-    } else {
-      return Colors.white;
-    }
-  }
-
-  Widget tankManage(Tank tank) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          tank.prefix,
-          style: TextStyle(
-            color: selectColor(tank.prefix),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          // '${tank.maxCapacity.toString()} lt',
-          '0 lt',
-          style: TextStyle(
-              color: selectColor(tank.prefix), fontWeight: FontWeight.bold),
-        ),
-        Text(
-          '${tank.liters.toString()} %',
-          style: TextStyle(
-              color: selectColor(tank.prefix), fontWeight: FontWeight.bold),
-        ),
-      ],
-    );
+  void selectImage() {
+    setState(() {
+      if (selectedTank == "FUEL") {
+        img = "assets/img/liquid-weights-pic/fuel.png";
+      }
+      if (selectedTank == "OIL") {
+        img = "assets/img/liquid-weights-pic/oil.png";
+      }
+      if (selectedTank == "FRESH WATER") {
+        img = "assets/img/liquid-weights-pic/fresh_w.png";
+      }
+      if (selectedTank == "UREA") {
+        img = "assets/img/liquid-weights-pic/urea.png";
+      }
+      if (selectedTank == "POOL") {
+        img = "assets/img/liquid-weights-pic/pool.png";
+      }
+      if (selectedTank == "SEWAGE") {
+        img = "assets/img/liquid-weights-pic/sewage.png";
+      }
+    });
   }
 
   @override
@@ -97,57 +82,17 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
             SizedBox(
               height: height * 0.02,
             ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: const Color.fromRGBO(0, 0, 0, 0.4),
-              ),
-              width: width * 0.8,
-              height: height * 0.15,
-              child: Row(
-                children: [
-                  const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(""),
-                      Text(
-                        "Liquids On Board",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "Percentage(%)",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: width * 0.015,
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: liquidsOnBoards.map((tank) {
-                              return tankManage(tank);
-                            }).toList(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            LiquidsOnBoardContainer(
+              selectColor: widget.selectColor,
             ),
             SizedBox(
               width: width,
               height: height * 0.3,
-              child: const Center(
-                child: Text("data"),
+              child: Center(
+                child: Image.asset(
+                  img,
+                  width: width * 0.9,
+                ),
               ),
             ),
             Row(
@@ -157,6 +102,7 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
                   onTap: () {
                     setState(() {
                       selectedTank = tank.prefix;
+                      selectImage();
                     });
                   },
                   child: Container(
@@ -177,7 +123,7 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
                               return CustomPaint(
                                 painter: LiquidPainter(
                                   _controller.value,
-                                  selectColor(tank.prefix),
+                                  widget.selectColor(tank.prefix),
                                 ),
                                 child: const SizedBox.expand(),
                               );
@@ -185,10 +131,10 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
                           ),
                           Text(
                             tank.prefix,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16),
+                                fontSize: width * 0.011),
                           ),
                         ],
                       ),
@@ -202,7 +148,7 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
                 padding: const EdgeInsets.all(5),
                 child: SliderTank(
                   selectedTank: selectedTank,
-                  selectColor: selectColor,
+                  selectColor: widget.selectColor,
                 ),
               )
           ],

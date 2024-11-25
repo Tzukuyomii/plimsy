@@ -57,7 +57,7 @@ class _Wind extends State<Wind> {
           Row(
             children: [
               Text(
-                "Wind Incidence: ${_rotationAngle.toStringAsFixed(2)}",
+                "Wind Incidence: ${_rotationAngle.toStringAsFixed(2)}°",
                 style: TextStyle(color: Colors.white, fontSize: width * 0.0085),
               ),
             ],

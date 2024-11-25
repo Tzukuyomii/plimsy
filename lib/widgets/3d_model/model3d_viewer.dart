@@ -12,6 +12,12 @@ class _Model3DViewerState extends State<Model3DViewer> {
   Flutter3DController controller = Flutter3DController();
 
   @override
+  void initState() {
+    super.initState();
+    controller = Flutter3DController();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Flutter3DViewer(
       controller: controller,
