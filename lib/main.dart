@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:plimsy/screens/login.dart';
 
 import 'package:flutter/foundation.dart';
@@ -11,6 +12,7 @@ void main() {
   } else if (kDebugMode) {
     print("L'app è in modalità Debug");
   }
+  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
 
   runApp(const App());
 }
