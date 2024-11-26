@@ -14,35 +14,35 @@ class OverallMenu extends StatefulWidget {
 class _OverallMenu extends State<OverallMenu> {
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final width = constraints.maxWidth;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
 
-      void stabilityButton() {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (ctx) => const Stability(),
-          ),
-        );
-      }
+        void stabilityButton() {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (ctx) => const Stability(),
+            ),
+          );
+        }
 
-      void safetyButton() {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (ctx) => const Safety(),
-          ),
-        );
-      }
+        void safetyButton() {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (ctx) => const Safety(),
+            ),
+          );
+        }
 
-      void signalButton() {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (ctx) => const Signal(),
-          ),
-        );
-      }
+        void signalButton() {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (ctx) => const Signal(),
+            ),
+          );
+        }
 
-      return Expanded(
-        child: Row(
+        return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Image.asset(
@@ -110,8 +110,8 @@ class _OverallMenu extends State<OverallMenu> {
               ),
             ),
           ],
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }

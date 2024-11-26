@@ -29,31 +29,27 @@ class ContainerMenu extends StatefulWidget {
 class _ContainerMenu extends State<ContainerMenu> {
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final width = MediaQuery.of(context).size.width;
-        final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
 
-        return AnimatedContainer(
-          curve: Curves.easeInOut,
-          duration: const Duration(milliseconds: 500),
-          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-          height: widget.containerHeight,
-          width: widget.containerWidth,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: const Color.fromRGBO(1, 86, 118, 0.8),
-          ),
-          child: FadeTransition(
-            opacity: widget.fadeAnimation,
-            child: widget.showContent
-                ? GeneralInfo(
-                    changeSize: widget.onDialogOpenChange,
-                  )
-                : const OverallMenu(),
-          ),
-        );
-      },
+    return AnimatedContainer(
+      curve: Curves.easeInOut,
+      duration: const Duration(milliseconds: 500),
+      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+      height: widget.containerHeight,
+      width: widget.containerWidth,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: const Color.fromRGBO(1, 86, 118, 0.8),
+      ),
+      child: FadeTransition(
+        opacity: widget.fadeAnimation,
+        child: widget.showContent
+            ? GeneralInfo(
+                changeSize: widget.onDialogOpenChange,
+              )
+            : const OverallMenu(),
+      ),
     );
   }
 }

@@ -125,18 +125,21 @@ class _Home extends State<Home> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ContainerMenu(
-                      containerHeight: containerHeight(),
-                      containerWidth: containerWidth(),
-                      isOpen: isOpen,
-                      fadeAnimation: _fadeAnimation,
-                      showContent: showContent,
-                      onDialogOpenChange: changeSize,
-                    ),
-                  ],
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ContainerMenu(
+                        containerHeight: containerHeight(),
+                        containerWidth: containerWidth(),
+                        isOpen: isOpen,
+                        fadeAnimation: _fadeAnimation,
+                        showContent: showContent,
+                        onDialogOpenChange: changeSize,
+                      ),
+                    ],
+                  ),
                 ),
                 Positioned(
                   bottom: 5,

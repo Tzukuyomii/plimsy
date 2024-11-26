@@ -106,28 +106,26 @@ class _ChooseVessel extends State<ChooseVessel> {
                                   borderRadius: BorderRadius.circular(10)),
                               child: Padding(
                                 padding: const EdgeInsets.all(5.0),
-                                child: Expanded(
-                                  child: DropdownButton<String>(
-                                    underline: Container(),
-                                    value: selectedItem,
-                                    hint: const Text(
-                                        "Seleziona un'imbarcazione "),
-                                    items: [
-                                      'Imbarcazione 1',
-                                      'Imbarcazione 2',
-                                      'Imbarcazione 3'
-                                    ].map((String item) {
-                                      return DropdownMenuItem<String>(
-                                        value: item,
-                                        child: Text(item),
-                                      );
-                                    }).toList(),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        selectedItem = newValue;
-                                      });
-                                    },
-                                  ),
+                                child: DropdownButton<String>(
+                                  underline: Container(),
+                                  value: selectedItem,
+                                  hint:
+                                      const Text("Seleziona un'imbarcazione "),
+                                  items: [
+                                    'Imbarcazione 1',
+                                    'Imbarcazione 2',
+                                    'Imbarcazione 3'
+                                  ].map((String item) {
+                                    return DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Text(item),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      selectedItem = newValue;
+                                    });
+                                  },
                                 ),
                               ),
                             ),

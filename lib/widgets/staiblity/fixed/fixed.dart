@@ -89,7 +89,7 @@ class _Fixed extends State<Fixed> with TickerProviderStateMixin {
             alignment: Alignment.topCenter,
             child: Row(
               children: [
-                _buildAccordion(width, height), // Accordion
+                // _buildAccordion(width, height), // Accordion
                 SizedBox(
                   width: width * 0.02,
                 ),

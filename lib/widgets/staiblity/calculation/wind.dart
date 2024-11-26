@@ -16,86 +16,83 @@ class _Wind extends State<Wind> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    return Expanded(
-      child: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Ruota fissa con i numeri
-                CustomPaint(
-                  size: Size(
-                      width * 0.05, height * 0.05), // Dimensione della ruota
-                  painter: FixedDegreeWheelPainter(),
-                ),
-                // Indicatore che ruota
-                Transform.rotate(
-                  angle: _rotationAngle,
-                  child: CustomPaint(
-                    size: Size(width * 0.05, height * 0.05),
-                    painter: RotatingIndicatorPainter(),
-                  ),
-                ),
-                // Immagine della barca al centro
-                Image.asset(
-                  'assets/img/calculations-main/yacht-top-icon.png', // Sostituisci con il file della barca
-                  width: width * 0.05,
-                  height: height * 0.05,
-                ),
-                // Interazione per ruotare
-                GestureDetector(
-                  onPanUpdate: (details) {
-                    setState(() {
-                      _rotationAngle += details.delta.dx * 0.01;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-          Row(
+    return Column(
+      children: [
+        Expanded(
+          child: Stack(
+            alignment: Alignment.center,
             children: [
-              Text(
-                "Wind Incidence: ${_rotationAngle.toStringAsFixed(2)}°",
-                style: TextStyle(color: Colors.white, fontSize: width * 0.0085),
+              // Ruota fissa con i numeri
+              CustomPaint(
+                size:
+                    Size(width * 0.05, height * 0.05), // Dimensione della ruota
+                painter: FixedDegreeWheelPainter(),
+              ),
+              // Indicatore che ruota
+              Transform.rotate(
+                angle: _rotationAngle,
+                child: CustomPaint(
+                  size: Size(width * 0.05, height * 0.05),
+                  painter: RotatingIndicatorPainter(),
+                ),
+              ),
+              // Immagine della barca al centro
+              Image.asset(
+                'assets/img/calculations-main/yacht-top-icon.png', // Sostituisci con il file della barca
+                width: width * 0.05,
+                height: height * 0.05,
+              ),
+              // Interazione per ruotare
+              GestureDetector(
+                onPanUpdate: (details) {
+                  setState(() {
+                    _rotationAngle += details.delta.dx * 0.01;
+                  });
+                },
               ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "Wind Velocity:",
-                    style: TextStyle(
-                        color: Colors.white, fontSize: width * 0.0085),
-                  ),
-                ],
-              ),
-              TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                  minimumSize: Size(width * 0.01, height * 0.01),
-                  side: const BorderSide(color: Colors.white, width: 1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                child: Text(
-                  "Calc",
+        ),
+        Row(
+          children: [
+            Text(
+              "Wind Incidence: ${_rotationAngle.toStringAsFixed(2)}°",
+              style: TextStyle(color: Colors.white, fontSize: width * 0.0085),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Wind Velocity:",
                   style:
                       TextStyle(color: Colors.white, fontSize: width * 0.0085),
                 ),
-              )
-            ],
-          ),
-        ],
-      ),
+              ],
+            ),
+            TextButton(
+              onPressed: () {},
+              style: TextButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                minimumSize: Size(width * 0.01, height * 0.01),
+                side: const BorderSide(color: Colors.white, width: 1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
+              child: Text(
+                "Calc",
+                style: TextStyle(color: Colors.white, fontSize: width * 0.0085),
+              ),
+            )
+          ],
+        ),
+      ],
     );
   }
 }

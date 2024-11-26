@@ -17,31 +17,29 @@ class GeneralInfo extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.asset(
-                "assets/img/logos/white-logo.png",
-                width: width * 0.3,
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.asset(
+              "assets/img/logos/white-logo.png",
+              width: width * 0.3,
+            ),
+            SizedBox(
+              height: height * 0.4,
+              width: width * 0.4,
+              child: const GridInfo(),
+            ),
+            InkWell(
+              onTap: () {
+                changeSize();
+              },
+              child: Image.asset(
+                "assets/img/info-panel/go-back-icon.png",
+                width: 100,
               ),
-              SizedBox(
-                height: height * 0.4,
-                width: width * 0.4,
-                child: const GridInfo(),
-              ),
-              InkWell(
-                onTap: () {
-                  changeSize();
-                },
-                child: Image.asset(
-                  "assets/img/info-panel/go-back-icon.png",
-                  width: 100,
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
         Expanded(
           child: Column(
