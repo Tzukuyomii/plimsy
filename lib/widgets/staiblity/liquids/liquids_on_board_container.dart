@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/data/liquids_data.dart';
+import 'package:plimsy/data/tanks_data.dart';
 import 'package:plimsy/models/tank.dart';
 
 class LiquidsOnBoardContainer extends StatefulWidget {
@@ -14,7 +15,63 @@ class LiquidsOnBoardContainer extends StatefulWidget {
 }
 
 class _LiquidsOnBoardContainer extends State<LiquidsOnBoardContainer> {
+  double litresOnBoardPercentageCalc(double litres, double maxCapacity) {
+    return (litres / maxCapacity) * 100;
+  }
+
+  Map<String, double> litresOnBoardCalc(
+    String prefix,
+    double litres,
+    double maxCapacity,
+  ) {
+    if (prefix == "FUEL") {
+      for (int i = 0; i < mockFuelTanks.length; i++) {
+        litres += mockFuelTanks[i].liters;
+        maxCapacity += mockFuelTanks[i].maxCapacity;
+      }
+    } else if (prefix == "OIL") {
+      for (int i = 0; i < mockOilTanks.length; i++) {
+        litres += mockOilTanks[i].liters;
+        maxCapacity += mockOilTanks[i].maxCapacity;
+      }
+    } else if (prefix == "FRESH WATER") {
+      for (int i = 0; i < mockFreshWaterTanks.length; i++) {
+        litres += mockFreshWaterTanks[i].liters;
+        maxCapacity += mockFreshWaterTanks[i].maxCapacity;
+      }
+    } else if (prefix == "UREA") {
+      for (int i = 0; i < mockUreaTanks.length; i++) {
+        litres += mockUreaTanks[i].liters;
+        maxCapacity += mockUreaTanks[i].maxCapacity;
+      }
+    } else if (prefix == "POOL") {
+      for (int i = 0; i < mockPoolTanks.length; i++) {
+        litres += mockPoolTanks[i].liters;
+        maxCapacity += mockPoolTanks[i].maxCapacity;
+      }
+    } else if (prefix == "SEWAGE") {
+      for (int i = 0; i < mockSewageTanks.length; i++) {
+        litres += mockSewageTanks[i].liters;
+        maxCapacity += mockSewageTanks[i].maxCapacity;
+      }
+    }
+
+    // Restituisci un oggetto mappa con entrambi i valori
+    return {'litres': litres, 'maxCapacity': maxCapacity};
+  }
+
   Widget tankManage(Tank tank, double width) {
+    double litresOnBoard = 0;
+    double maxCapacity = 0;
+    double litresPercentage = 0;
+
+    Map<String, double> updatedValues =
+        litresOnBoardCalc(tank.prefix, litresOnBoard, maxCapacity);
+    litresOnBoard = updatedValues['litres']!;
+    maxCapacity = updatedValues['maxCapacity']!;
+
+    litresPercentage = litresOnBoardPercentageCalc(litresOnBoard, maxCapacity);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -27,8 +84,7 @@ class _LiquidsOnBoardContainer extends State<LiquidsOnBoardContainer> {
           ),
         ),
         Text(
-          // '${tank.maxCapacity.toString()} lt',
-          '0 lt',
+          '${litresOnBoard.toStringAsFixed(1)} lt',
           style: TextStyle(
             color: widget.selectColor(tank.prefix),
             fontWeight: FontWeight.bold,
@@ -36,7 +92,7 @@ class _LiquidsOnBoardContainer extends State<LiquidsOnBoardContainer> {
           ),
         ),
         Text(
-          '${tank.liters.toString()} %',
+          '${litresPercentage.toStringAsFixed(2)} %',
           style: TextStyle(
             color: widget.selectColor(tank.prefix),
             fontWeight: FontWeight.bold,

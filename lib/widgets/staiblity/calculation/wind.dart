@@ -10,6 +10,13 @@ class Wind extends StatefulWidget {
 
 class _Wind extends State<Wind> {
   double _rotationAngle = 0.0; // Angolo di rotazione in radianti
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose(); // Non dimenticare di liberare il controller
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +79,43 @@ class _Wind extends State<Wind> {
                   style:
                       TextStyle(color: Colors.white, fontSize: width * 0.0085),
                 ),
+                SizedBox(
+                  width: width * 0.005,
+                ),
+                SizedBox(
+                  width: width * 0.035,
+                  height: height * 0.025,
+                  child: TextField(
+                    textAlign: TextAlign.end,
+                    cursorColor: Colors.white,
+                    style:
+                        TextStyle(color: Colors.white, fontSize: width * 0.01),
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.zero,
+
+                      enabledBorder: OutlineInputBorder(
+                        // Bordo visibile
+                        borderRadius: BorderRadius.circular(4.0),
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 1.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(4.0),
+                          borderSide: const BorderSide(
+                              color: Colors.white, width: 1.0)),
+                      filled: false, // Rimuove il background
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: width * 0.005,
+                ),
+                Text(
+                  "knots",
+                  style:
+                      TextStyle(color: Colors.white, fontSize: width * 0.0085),
+                )
               ],
             ),
             TextButton(
