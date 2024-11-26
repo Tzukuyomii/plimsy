@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/screens/login.dart';
 
+import 'package:flutter/foundation.dart';
+
 void main() {
+  if (kReleaseMode) {
+    print("L'app è in modalità Release");
+  } else if (kProfileMode) {
+    print("L'app è in modalità Profile");
+  } else if (kDebugMode) {
+    print("L'app è in modalità Debug");
+  }
+
   runApp(const App());
 }
 
