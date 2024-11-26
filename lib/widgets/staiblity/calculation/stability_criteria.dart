@@ -11,6 +11,11 @@ class StabilityCriteria extends StatefulWidget {
 class _StabilityCriteria extends State<StabilityCriteria> {
   @override
   Widget build(BuildContext context) {
-    return const Text("Stability Crit");
+    return const Center(
+      child: Text(
+        "Demo Version...",
+        style: TextStyle(color: Colors.white),
+      ),
+    );
   }
 }

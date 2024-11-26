@@ -45,7 +45,7 @@ class Safety extends StatelessWidget {
                 ),
                 Center(
                   child: Text(
-                    "Work in progress...",
+                    "Demo Version...",
                     style:
                         TextStyle(color: Colors.white, fontSize: width * 0.07),
                   ),

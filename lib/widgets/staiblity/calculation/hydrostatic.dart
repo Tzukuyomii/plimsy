@@ -11,6 +11,11 @@ class Hydrostatic extends StatefulWidget {
 class _Hydrostatic extends State<Hydrostatic> {
   @override
   Widget build(BuildContext context) {
-    return const Text("Hydrostatic");
+    return const Center(
+      child: Text(
+        "Demo Version...",
+        style: TextStyle(color: Colors.white),
+      ),
+    );
   }
 }

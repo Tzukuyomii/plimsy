@@ -13,40 +13,38 @@ class _VesselStatus extends State<VesselStatus> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Expanded(
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: CustomPaint(
-                  size: Size(width * 0.09,
-                      height * 0.07), // Dimensioni della barra semicircolare
-                  painter: SemicircleBorderPainter(),
-                ),
+    return Column(
+      children: [
+        Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: CustomPaint(
+                size: Size(width * 0.09,
+                    height * 0.07), // Dimensioni della barra semicircolare
+                painter: SemicircleBorderPainter(),
               ),
-              Positioned(
-                top: 0,
-                left: 0,
-                bottom: 0,
-                right: 0,
-                child: Image.asset(
-                  "assets/img/calculations-main/icon-status-waiting.png",
-                ),
-              ),
-            ],
-          ),
-          Text(
-            "- Please asses the draft of the vessel",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: width * 0.01,
-              fontWeight: FontWeight.w500,
             ),
+            Positioned(
+              top: 0,
+              left: 0,
+              bottom: 0,
+              right: 0,
+              child: Image.asset(
+                "assets/img/calculations-main/icon-status-waiting.png",
+              ),
+            ),
+          ],
+        ),
+        Text(
+          "- Please asses the draft of the vessel",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: width * 0.01,
+            fontWeight: FontWeight.w500,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

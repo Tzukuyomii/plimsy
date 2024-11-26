@@ -55,7 +55,12 @@ class _Draft extends State<Draft> with TickerProviderStateMixin {
       case "Stability criteria compliance":
         return const StabilityCriteria();
       default:
-        return const Text("Titolo Errato");
+        return const Center(
+          child: Text(
+            "Demo Version...err",
+            style: TextStyle(color: Colors.white),
+          ),
+        );
     }
   }
 
@@ -82,6 +87,7 @@ class _Draft extends State<Draft> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    screenSize = MediaQuery.of(context).size;
     return Expanded(
       child: Stack(
         children: [
