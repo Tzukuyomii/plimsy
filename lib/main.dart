@@ -12,9 +12,10 @@ void main() {
   } else if (kDebugMode) {
     print("L'app è in modalità Debug");
   }
-  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]).then((_) =>   runApp(const App()));
 
-  runApp(const App());
+
 }
 
 class App extends StatelessWidget {
