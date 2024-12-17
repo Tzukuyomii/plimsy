@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/dto/host.dart';
+import 'package:plimsy/dto/user.dart';
+import 'package:plimsy/services/host.dart';
 import 'package:plimsy/widgets/3d_model/model3d_viewer.dart';
 import 'package:plimsy/widgets/menus/container_menu.dart';
 import 'package:plimsy/widgets/general_info/general_info_container.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  Home({super.key, required this.user, required this.host});
+
+  UserDTO user;
+  HostDTO host;
 
   @override
   State<Home> createState() {
@@ -15,6 +21,7 @@ class Home extends StatefulWidget {
 class _Home extends State<Home> with TickerProviderStateMixin {
   bool isOpen = false;
   bool showContent = false;
+  HostService hostService = HostService();
 
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
@@ -22,6 +29,8 @@ class _Home extends State<Home> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    hostService.host(widget.host.apiKey);
 
     // AnimationController per gestire le animazioni.
     _controller = AnimationController(

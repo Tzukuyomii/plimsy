@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class LiquidPainter extends CustomPainter {
-  LiquidPainter(this.animationValue, this.tankcolor);
+  LiquidPainter(this.animationValue, this.tankcolor, this.fillPercentage);
 
   final double animationValue;
+  double fillPercentage;
   Color tankcolor;
 
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()..color = tankcolor;
-    double waveHeight = 5.0;
-    double baseHeight = size.height * 0.5; // Altezza del liquido statico
+    double waveHeight = 2.0;
+    double baseHeight = size.height *
+        (1 - (fillPercentage / 100)); // Altezza del liquido statico
 
     Path path = Path();
     path.moveTo(0, baseHeight);

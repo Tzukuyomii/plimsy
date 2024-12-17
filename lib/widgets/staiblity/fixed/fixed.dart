@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/widgets/staiblity/fixed/fixed_accordion.dart';
 
 class Fixed extends StatefulWidget {
   const Fixed({super.key});
@@ -88,25 +89,35 @@ class _Fixed extends State<Fixed> with TickerProviderStateMixin {
           Align(
             alignment: Alignment.topCenter,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // _buildAccordion(width, height), // Accordion
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: FixedAccordion(dropDownValue: _dropdownValue),
+                ), // Accordion
                 SizedBox(
                   width: width * 0.02,
                 ),
-                DropdownButton<String>(
-                  value: _dropdownValue,
-                  items: <String>['main-deck', 'lower-deck', 'observation-deck']
-                      .map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _dropdownValue = newValue!;
-                    });
-                  },
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: DropdownButton<String>(
+                    value: _dropdownValue,
+                    items: <String>[
+                      'main-deck',
+                      'lower-deck',
+                      'observation-deck'
+                    ].map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _dropdownValue = newValue!;
+                      });
+                    },
+                  ),
                 ),
               ],
             ),
@@ -135,30 +146,4 @@ class TapPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true; // Rinfresca ogni volta
   }
-}
-
-Widget _buildAccordion(double width, double height) {
-  return Container(
-    decoration: BoxDecoration(
-      color: const Color(0xFF008B8B),
-      borderRadius: BorderRadius.circular(10),
-    ),
-    width: width * 0.5,
-    height: height * 0.08, // Altezza fissa per evitare errori di layout
-    child: ExpansionTile(
-      trailing: Icon(
-        Icons.expand_more,
-        size: width * 0.01, // Ridimensiona la freccia
-      ),
-      title: Text(
-        'Show Table',
-        style: TextStyle(color: Colors.white, fontSize: width * 0.01),
-      ),
-      children: [
-        ListTile(title: Text('Elemento 1')),
-        ListTile(title: Text('Elemento 2')),
-        ListTile(title: Text('Elemento 3')),
-      ],
-    ),
-  );
 }

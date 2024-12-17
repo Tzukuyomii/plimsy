@@ -1,13 +1,15 @@
 import 'package:plimsy/models/tank.dart';
+import 'package:plimsy/models/tanks.dart';
 
 List<Tank> liquidsOnBoards = [
   Tank(
-      id: "1",
-      maxCapacity: 523 * 0.985,
-      liters: 0,
-      prefix: "FUEL",
-      permeability: 0.985,
-      weightSpec: 0.92),
+    id: "1",
+    maxCapacity: 523 * 0.985,
+    liters: 0,
+    prefix: "FUEL",
+    permeability: 0.985,
+    weightSpec: 0.92,
+  ),
   Tank(
       id: "2",
       maxCapacity: 523 * 0.985,

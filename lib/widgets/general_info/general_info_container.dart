@@ -34,7 +34,10 @@ class _GeneralInfoContainer extends State<GeneralInfoContainer> {
             onTap: () {
               widget.onDialogOpenChange();
             },
-            child: Image.asset("assets/img/main/info-icon.png"),
+            child: Image.asset(
+              "assets/img/main/info-icon.png",
+              width: width * 0.05,
+            ),
           )
         ],
       ),

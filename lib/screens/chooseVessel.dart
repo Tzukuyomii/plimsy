@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/dto/user.dart';
 import 'package:plimsy/screens/home.dart';
 
 class ChooseVessel extends StatefulWidget {
-  const ChooseVessel({super.key});
+  ChooseVessel({super.key, required this.user});
+
+  UserDTO user;
 
   @override
   State<ChooseVessel> createState() {
@@ -17,9 +20,17 @@ class _ChooseVessel extends State<ChooseVessel> {
   Widget build(BuildContext context) {
     void accediButton() {
       if (selectedItem != null) {
+        final selectedHost = widget.user.hosts.firstWhere(
+          (host) => host.description == selectedItem,
+          orElse: () => throw Exception("Host non trovato"),
+        );
+
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (ctx) => const Home(),
+            builder: (ctx) => Home(
+              user: widget.user,
+              host: selectedHost,
+            ),
           ),
         );
       } else {
@@ -111,14 +122,10 @@ class _ChooseVessel extends State<ChooseVessel> {
                                   value: selectedItem,
                                   hint:
                                       const Text("Seleziona un'imbarcazione "),
-                                  items: [
-                                    'Imbarcazione 1',
-                                    'Imbarcazione 2',
-                                    'Imbarcazione 3'
-                                  ].map((String item) {
+                                  items: widget.user.hosts.map((host) {
                                     return DropdownMenuItem<String>(
-                                      value: item,
-                                      child: Text(item),
+                                      value: host.description,
+                                      child: Text(host.description),
                                     );
                                   }).toList(),
                                   onChanged: (String? newValue) {

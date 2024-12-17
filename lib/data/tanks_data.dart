@@ -244,16 +244,16 @@ final List<Tank> mockSewageTanks = [
 ];
 
 final Tanks mockTanks = Tanks(
-  mockFuelTanks, // Lista di fuel tanks
-  mockOilTanks, // Lista di oil tanks
-  mockFreshWaterTanks, // Lista di fresh water tanks
-  mockUreaTanks, // Lista di urea tanks
-  mockPoolTanks, // Lista di pool tanks
-  mockSewageTanks, // Lista di sewage tanks
+  fuel: mockFuelTanks, // Lista di fuel tanks
+  oil: mockOilTanks, // Lista di oil tanks
+  freshW: mockFreshWaterTanks, // Lista di fresh water tanks
+  urea: mockUreaTanks, // Lista di urea tanks
+  pool: mockPoolTanks, // Lista di pool tanks
+  sewage: mockSewageTanks, // Lista di sewage tanks
 );
 
 final Pools mockPools = Pools(
-  mockPoolsTanks,
+  pools: mockPoolsTanks,
 );
 
 final List<Tank> mockPoolsTanks = [

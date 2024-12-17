@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/data/tanks_data.dart';
+import 'package:plimsy/models/tank.dart';
 import 'package:plimsy/widgets/staiblity/calculation/draft.dart';
 import 'package:plimsy/widgets/staiblity/fixed/fixed.dart';
 import 'package:plimsy/widgets/staiblity/liquids/pools.dart';
@@ -15,7 +17,27 @@ class Stability extends StatefulWidget {
 }
 
 class _Stability extends State<Stability> {
+  final Map<String, ValueNotifier<double>> percentageNotifiers = {};
   String showContent = "";
+
+  final Map<String, List<Tank>> allTanks = {
+    "FUEL": mockTanks.fuel,
+    "OIL": mockTanks.oil,
+    "FRESH WATER": mockTanks.freshW,
+    "UREA": mockTanks.urea,
+    "POOL": mockTanks.pool,
+    "SEWAGE": mockTanks.sewage,
+  };
+
+  void updateTanks(String tankType, List<Tank> updatedTanks) {
+    setState(() {
+      if (tankType == "POOLS") {
+        mockPools.pools = updatedTanks;
+      } else {
+        allTanks[tankType] = updatedTanks;
+      }
+    });
+  }
 
   Color selectColor(String prefix) {
     if (prefix == "OIL") {
@@ -46,32 +68,46 @@ class _Stability extends State<Stability> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: Container(
-        height: height,
-        width: width,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color.fromARGB(134, 1, 200, 235),
-              Color.fromARGB(122, 9, 110, 150),
-              Color.fromARGB(177, 1, 42, 117)
+      body: SingleChildScrollView(
+        child: Container(
+          height: height,
+          width: width,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.fromARGB(134, 1, 200, 235),
+                Color.fromARGB(122, 9, 110, 150),
+                Color.fromARGB(177, 1, 42, 117)
+              ],
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              MenuStability(
+                changeContent: changeContent,
+                showContent: showContent,
+              ),
+              if (showContent == "Tanks")
+                Tanks(
+                  percentageNotifier: percentageNotifiers,
+                  updateTanks: updateTanks,
+                  selectColor: selectColor,
+                  tanks: allTanks,
+                ),
+              if (showContent == "Pools")
+                Pools(
+                  percentageNotifier: percentageNotifiers,
+                  updateTanks: updateTanks,
+                  selectColor: selectColor,
+                  tanks: allTanks,
+                ),
+              if (showContent == "Fixed") const Fixed(),
+              if (showContent == "Draft") const Draft(),
             ],
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            MenuStability(
-              changeContent: changeContent,
-              showContent: showContent,
-            ),
-            if (showContent == "Tanks") Tanks(selectColor: selectColor),
-            if (showContent == "Pools") Pools(selectColor: selectColor),
-            if (showContent == "Fixed") const Fixed(),
-            if (showContent == "Draft") const Draft(),
-          ],
         ),
       ),
     );

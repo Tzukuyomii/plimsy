@@ -6,9 +6,18 @@ import 'package:plimsy/widgets/staiblity/liquids/liquids_on_board_container.dart
 import 'package:plimsy/widgets/staiblity/liquids/slider_tank.dart';
 
 class Tanks extends StatefulWidget {
-  Tanks({super.key, required this.selectColor});
+  Tanks({
+    super.key,
+    required this.selectColor,
+    required this.tanks,
+    required this.updateTanks,
+    required this.percentageNotifier,
+  });
 
   Function selectColor;
+  Function updateTanks;
+  Map<String, List<Tank>> tanks;
+  final Map<String, ValueNotifier<double>> percentageNotifier;
 
   @override
   State<Tanks> createState() {
@@ -21,10 +30,20 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   String img = "assets/img/liquid-weights-pic/fuel.png";
 
+  void updateTanks(String tankType, List<Tank> updatedTanks) {
+    setState(() {
+      widget.tanks[tankType] = updatedTanks;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    selectedTank = liquidsOnBoards[0].prefix;
+
+    // Inizializza i ValueNotifier per ogni tipo di tank
+    widget.tanks.keys.forEach((tankType) {
+      widget.percentageNotifier[tankType] = ValueNotifier<double>(0.0);
+    });
 
     _controller = AnimationController(
       vsync: this,
@@ -34,6 +53,7 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
+    widget.percentageNotifier.values.forEach((notifier) => notifier.dispose());
     _controller.dispose();
     super.dispose();
   }
@@ -83,7 +103,9 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
               height: height * 0.02,
             ),
             LiquidsOnBoardContainer(
+              tanksData: widget.tanks,
               selectColor: widget.selectColor,
+              percentageNotifier: widget.percentageNotifier,
             ),
             SizedBox(
               width: width,
@@ -97,11 +119,11 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: liquidsOnBoards.map((tank) {
+              children: widget.tanks.entries.map((entry) {
                 return InkWell(
                   onTap: () {
                     setState(() {
-                      selectedTank = tank.prefix;
+                      selectedTank = entry.key;
                       selectImage();
                     });
                   },
@@ -123,14 +145,15 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
                               return CustomPaint(
                                 painter: LiquidPainter(
                                   _controller.value,
-                                  widget.selectColor(tank.prefix),
+                                  widget.selectColor(entry.key),
+                                  widget.percentageNotifier[entry.key]!.value,
                                 ),
                                 child: const SizedBox.expand(),
                               );
                             },
                           ),
                           Text(
-                            tank.prefix,
+                            entry.key,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -146,9 +169,14 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
             if (selectedTank.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.all(5),
-                child: SliderTank(
-                  selectedTank: selectedTank,
-                  selectColor: widget.selectColor,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SliderTank(
+                    updateTanks: updateTanks,
+                    tanksData: widget.tanks,
+                    selectedTank: selectedTank,
+                    selectColor: widget.selectColor,
+                  ),
                 ),
               )
           ],

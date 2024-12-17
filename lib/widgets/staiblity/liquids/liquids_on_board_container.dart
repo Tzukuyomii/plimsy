@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:plimsy/data/liquids_data.dart';
-import 'package:plimsy/data/tanks_data.dart';
 import 'package:plimsy/models/tank.dart';
 
 class LiquidsOnBoardContainer extends StatefulWidget {
-  LiquidsOnBoardContainer({super.key, required this.selectColor});
+  LiquidsOnBoardContainer({
+    super.key,
+    required this.tanksData,
+    required this.selectColor,
+    required this.percentageNotifier,
+  });
 
-  Function selectColor;
+  final Map<String, List<Tank>> tanksData; // Dati dinamici
+  final Function selectColor; // Funzione per determinare i colori
+  final Map<String, ValueNotifier<double>> percentageNotifier;
 
   @override
   State<LiquidsOnBoardContainer> createState() {
@@ -15,70 +20,47 @@ class LiquidsOnBoardContainer extends StatefulWidget {
 }
 
 class _LiquidsOnBoardContainer extends State<LiquidsOnBoardContainer> {
+  // Metodo per calcolare la percentuale di liquidi a bordo
   double litresOnBoardPercentageCalc(double litres, double maxCapacity) {
-    return (litres / maxCapacity) * 100;
+    return maxCapacity == 0 ? 0 : (litres / maxCapacity) * 100;
   }
 
-  Map<String, double> litresOnBoardCalc(
-    String prefix,
-    double litres,
-    double maxCapacity,
-  ) {
-    if (prefix == "FUEL") {
-      for (int i = 0; i < mockFuelTanks.length; i++) {
-        litres += mockFuelTanks[i].liters;
-        maxCapacity += mockFuelTanks[i].maxCapacity;
-      }
-    } else if (prefix == "OIL") {
-      for (int i = 0; i < mockOilTanks.length; i++) {
-        litres += mockOilTanks[i].liters;
-        maxCapacity += mockOilTanks[i].maxCapacity;
-      }
-    } else if (prefix == "FRESH WATER") {
-      for (int i = 0; i < mockFreshWaterTanks.length; i++) {
-        litres += mockFreshWaterTanks[i].liters;
-        maxCapacity += mockFreshWaterTanks[i].maxCapacity;
-      }
-    } else if (prefix == "UREA") {
-      for (int i = 0; i < mockUreaTanks.length; i++) {
-        litres += mockUreaTanks[i].liters;
-        maxCapacity += mockUreaTanks[i].maxCapacity;
-      }
-    } else if (prefix == "POOL") {
-      for (int i = 0; i < mockPoolTanks.length; i++) {
-        litres += mockPoolTanks[i].liters;
-        maxCapacity += mockPoolTanks[i].maxCapacity;
-      }
-    } else if (prefix == "SEWAGE") {
-      for (int i = 0; i < mockSewageTanks.length; i++) {
-        litres += mockSewageTanks[i].liters;
-        maxCapacity += mockSewageTanks[i].maxCapacity;
-      }
+  // Metodo per calcolare litri e capacità massima in modo dinamico
+  Map<String, double> litresOnBoardCalc(List<Tank> tanks) {
+    double totalLitres = 0;
+    double totalCapacity = 0;
+
+    for (var tank in tanks) {
+      totalLitres += tank.liters;
+      totalCapacity += tank.maxCapacity;
     }
 
-    // Restituisci un oggetto mappa con entrambi i valori
-    return {'litres': litres, 'maxCapacity': maxCapacity};
+    return {
+      'litres': totalLitres,
+      'maxCapacity': totalCapacity,
+    };
   }
 
-  Widget tankManage(Tank tank, double width) {
-    double litresOnBoard = 0;
-    double maxCapacity = 0;
-    double litresPercentage = 0;
-
-    Map<String, double> updatedValues =
-        litresOnBoardCalc(tank.prefix, litresOnBoard, maxCapacity);
-    litresOnBoard = updatedValues['litres']!;
-    maxCapacity = updatedValues['maxCapacity']!;
-
-    litresPercentage = litresOnBoardPercentageCalc(litresOnBoard, maxCapacity);
+  // Metodo per generare i widget dei tank
+  Widget tankManage(String prefix, List<Tank> tanks, double width) {
+    Map<String, double> updatedValues = litresOnBoardCalc(tanks);
+    // Calcola i valori dinamicamente
+    double litresOnBoard = updatedValues['litres']!;
+    double maxCapacity = updatedValues['maxCapacity']!;
+    double litresPercentage =
+        litresOnBoardPercentageCalc(litresOnBoard, maxCapacity);
+    // Aggiorna il ValueNotifier con la nuova percentuale
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.percentageNotifier[prefix]!.value = litresPercentage;
+    });
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          tank.prefix,
+          prefix,
           style: TextStyle(
-            color: widget.selectColor(tank.prefix),
+            color: widget.selectColor(prefix),
             fontWeight: FontWeight.bold,
             fontSize: width * 0.011,
           ),
@@ -86,7 +68,7 @@ class _LiquidsOnBoardContainer extends State<LiquidsOnBoardContainer> {
         Text(
           '${litresOnBoard.toStringAsFixed(1)} lt',
           style: TextStyle(
-            color: widget.selectColor(tank.prefix),
+            color: widget.selectColor(prefix),
             fontWeight: FontWeight.bold,
             fontSize: width * 0.01,
           ),
@@ -94,7 +76,7 @@ class _LiquidsOnBoardContainer extends State<LiquidsOnBoardContainer> {
         Text(
           '${litresPercentage.toStringAsFixed(2)} %',
           style: TextStyle(
-            color: widget.selectColor(tank.prefix),
+            color: widget.selectColor(prefix),
             fontWeight: FontWeight.bold,
             fontSize: width * 0.01,
           ),
@@ -107,6 +89,7 @@ class _LiquidsOnBoardContainer extends State<LiquidsOnBoardContainer> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
@@ -114,49 +97,45 @@ class _LiquidsOnBoardContainer extends State<LiquidsOnBoardContainer> {
       ),
       width: width * 0.8,
       height: height * 0.15,
-      child: Row(
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(""),
-              Text(
-                "Liquids On Board",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: width * 0.01,
-                ),
-              ),
-              Text(
-                "Percentage(%)",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: width * 0.01,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            width: width * 0.015,
-          ),
-          Expanded(
-            child: Column(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: width * 0.01),
+        child: Row(
+          children: [
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: liquidsOnBoards.map((tank) {
-                      return tankManage(tank, width);
-                    }).toList(),
+                const Text(""),
+                Text(
+                  "Liquids On Board",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: width * 0.01,
+                  ),
+                ),
+                Text(
+                  "Percentage(%)",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: width * 0.01,
                   ),
                 ),
               ],
             ),
-          ),
-        ],
+            SizedBox(
+              width: width * 0.015,
+            ),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: widget.tanksData.entries.map((entry) {
+                  return tankManage(entry.key, entry.value, width);
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

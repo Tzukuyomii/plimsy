@@ -36,7 +36,7 @@ class GeneralInfo extends StatelessWidget {
               },
               child: Image.asset(
                 "assets/img/info-panel/go-back-icon.png",
-                width: 100,
+                width: width * 0.07,
               ),
             )
           ],
@@ -188,11 +188,17 @@ class GeneralInfo extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Image.asset("assets/img/info-panel/contact-us-icon.png"),
+                  Image.asset(
+                    "assets/img/info-panel/contact-us-icon.png",
+                    width: width * 0.05,
+                  ),
                   SizedBox(
                     width: width * 0.04,
                   ),
-                  Image.asset("assets/img/info-panel/help-icon.png"),
+                  Image.asset(
+                    "assets/img/info-panel/help-icon.png",
+                    width: width * 0.05,
+                  ),
                 ],
               )
             ],

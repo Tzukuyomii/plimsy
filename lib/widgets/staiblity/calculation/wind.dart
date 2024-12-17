@@ -86,6 +86,7 @@ class _Wind extends State<Wind> {
                   width: width * 0.035,
                   height: height * 0.025,
                   child: TextField(
+                    keyboardType: TextInputType.number,
                     textAlign: TextAlign.end,
                     cursorColor: Colors.white,
                     style:

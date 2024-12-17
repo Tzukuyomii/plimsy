@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/dto/user.dart';
 import 'package:plimsy/screens/chooseVessel.dart';
 import 'package:plimsy/screens/home.dart';
+import 'package:plimsy/services/auth_service.dart';
 import 'package:plimsy/widgets/input_login.dart';
 
 class Login extends StatelessWidget {
@@ -11,19 +13,43 @@ class Login extends StatelessWidget {
     final usernameController = TextEditingController();
     final passwordController = TextEditingController();
 
-    void accediButton() {
-      print(usernameController.text);
-      if (usernameController.text == "GiovanniR") {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (ctx) => ChooseVessel(),
-          ),
+    final AuthService authService = AuthService();
+
+    void accediButton() async {
+      try {
+        // Ottieni il DTO dell'utente
+        final UserDTO user = await authService.authenticate(
+          usernameController.text,
+          passwordController.text,
         );
-      } else {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (ctx) => const Home(),
-          ),
+        // Naviga in base alla lunghezza dell'array hosts
+        if (user.hosts.length > 1) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (ctx) => Home(
+                user: user,
+                host: user.hosts[0],
+              ), // Passa UserDTO alla schermata
+            ),
+          );
+        } else {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (ctx) =>
+                  ChooseVessel(user: user), // Passa UserDTO alla schermata
+            ),
+          );
+        }
+
+        // Messaggio di successo
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Benvenuto, ${user.firstName} ${user.lastName}!')),
+        );
+      } catch (e) {
+        // Mostra il messaggio di errore
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Errore: $e')),
         );
       }
     }

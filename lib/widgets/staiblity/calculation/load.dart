@@ -50,7 +50,7 @@ class _Load extends State<Load> with TickerProviderStateMixin {
             animation: _controller,
             builder: (context, child) {
               return CustomPaint(
-                painter: LiquidPainter(_controller.value, Colors.blue),
+                painter: LiquidPainter(_controller.value, Colors.blue, 50),
                 child: const SizedBox.expand(),
               );
             },

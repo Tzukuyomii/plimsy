@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/data/note_pools.dart';
+import 'package:plimsy/models/tank.dart';
 import 'package:plimsy/widgets/3d_model/model3d_viewer.dart';
 import 'package:plimsy/widgets/staiblity/liquids/dynamic_radio_button.dart';
 import 'package:plimsy/widgets/staiblity/liquids/liquids_on_board_container.dart';
 import 'package:plimsy/widgets/staiblity/liquids/slider_tank.dart';
 
 class Pools extends StatefulWidget {
-  Pools({super.key, required this.selectColor});
+  Pools({
+    super.key,
+    required this.selectColor,
+    required this.tanks,
+    required this.updateTanks,
+    required this.percentageNotifier,
+  });
 
   Function selectColor;
+  Function updateTanks;
+  Map<String, List<Tank>> tanks;
+  final Map<String, ValueNotifier<double>> percentageNotifier;
 
   @override
   State<Pools> createState() {
@@ -36,6 +46,8 @@ class _Pools extends State<Pools> with TickerProviderStateMixin {
               Align(
                 alignment: Alignment.topCenter,
                 child: LiquidsOnBoardContainer(
+                  percentageNotifier: widget.percentageNotifier,
+                  tanksData: widget.tanks,
                   selectColor: widget.selectColor,
                 ),
               ),
@@ -48,6 +60,8 @@ class _Pools extends State<Pools> with TickerProviderStateMixin {
                       child: Padding(
                         padding: const EdgeInsets.all(5),
                         child: SliderTank(
+                          updateTanks: widget.updateTanks,
+                          tanksData: widget.tanks,
                           selectedTank: "POOLS",
                           selectColor: widget.selectColor,
                         ),
