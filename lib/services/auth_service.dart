@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:plimsy/dto/user.dart';
 import 'package:plimsy/services/api_client.dart';
+import 'package:plimsy/services/handler_error.dart';
 import 'package:plimsy/util/secure_auth_storage.dart';
 
 class AuthService {
@@ -40,7 +41,7 @@ class AuthService {
             'Errore nel recupero del token: ${response.statusCode}');
       }
     } on DioError catch (e) {
-      throw _handleDioError(e);
+      throw handleDioError(e);
     }
   }
 
@@ -91,12 +92,11 @@ class AuthService {
         "/api/rest-services/v1/users/login",
         options: Options(
           headers: {
-            "Authorization": "Bearer $token", // Aggiungi il prefisso "Bearer"
+            "Authorization": "Bearer $token",
             "Content-Type": "application/json",
           },
         ),
       );
-      // print("USER JSON${UserDTO.fromJson(response.data)}");
 
       if (response.statusCode == 200) {
         print('Login avvenuto con successo: ${response.data}');
@@ -105,17 +105,7 @@ class AuthService {
         throw Exception('Errore nel login: ${response.statusCode}');
       }
     } on DioError catch (e) {
-      throw _handleDioError(e);
-    }
-  }
-
-  // Metodo helper per gestire errori di Dio
-  Exception _handleDioError(DioError e) {
-    if (e.response != null) {
-      return Exception(
-          'Errore: ${e.response?.data['error_description'] ?? e.message}');
-    } else {
-      return Exception('Errore di connessione: ${e.message}');
+      throw handleDioError(e);
     }
   }
 

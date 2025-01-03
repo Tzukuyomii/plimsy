@@ -35,7 +35,7 @@ class LoginScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-                  "assets/img/logos/white-logo.png",
+                  "assets/img/logos/main-logo.png",
                   width: width * 0.3,
                 ),
                 SizedBox(

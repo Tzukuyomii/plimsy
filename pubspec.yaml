@@ -42,6 +42,7 @@ dependencies:
   json_annotation: ^4.9.0
   dio: ^5.7.0
   flutter_secure_storage: ^9.2.2
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
@@ -74,7 +75,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/img/
-    - assets/img/logos/white-logo.png
+    - assets/img/logos/main-logo.png
     - assets/img/main/maps-icon.png
     - assets/img/main/stability-icon.png
     - assets/img/main/security-icon.png
@@ -92,6 +93,7 @@ flutter:
     - assets/img/tanks-page/pools-icon.png
     - assets/img/solid-weights/fixedweights.png
     - assets/img/calculations-main/loadline-status.png
+    - assets/img/calculations-main/draft-icon.png
     - assets/img/info-panel/go-back-icon.png
     - assets/img/info-panel/help-icon.png
     - assets/img/info-panel/contact-us-icon.png

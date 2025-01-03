@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/dto/host.dart';
 import 'package:plimsy/dto/user.dart';
+import 'package:plimsy/models/content.dart';
 import 'package:plimsy/services/host.dart';
+import 'package:plimsy/util/secure_auth_storage.dart';
 import 'package:plimsy/widgets/3d_model/model3d_viewer.dart';
 import 'package:plimsy/widgets/menus/container_menu.dart';
 import 'package:plimsy/widgets/general_info/general_info_container.dart';
+import 'dart:convert';
 
 class Home extends StatefulWidget {
   Home({super.key, required this.user, required this.host});
@@ -22,15 +25,34 @@ class _Home extends State<Home> with TickerProviderStateMixin {
   bool isOpen = false;
   bool showContent = false;
   HostService hostService = HostService();
+  SecureAuthStorage storage = SecureAuthStorage();
 
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
+
+  void _initializeContent() async {
+    // Recupera gli assets salvati.
+    final assets = await SecureAuthStorage.getAssets();
+
+    // Prepara il contenuto basandoti sugli assets.
+    final body =
+        assets != null ? Map<String, String>.from(json.decode(assets)) : {};
+
+    // Valorizza l'oggetto content.
+    Content content = Content(
+      request: "connection",
+      body: body,
+    );
+
+    // Avvia il servizio host.
+    hostService.host(widget.host.apiKey, content);
+  }
 
   @override
   void initState() {
     super.initState();
 
-    hostService.host(widget.host.apiKey);
+    _initializeContent();
 
     // AnimationController per gestire le animazioni.
     _controller = AnimationController(
@@ -146,6 +168,7 @@ class _Home extends State<Home> with TickerProviderStateMixin {
                         fadeAnimation: _fadeAnimation,
                         showContent: showContent,
                         onDialogOpenChange: changeSize,
+                        apiKey: widget.host.apiKey,
                       ),
                     ],
                   ),

@@ -4,16 +4,13 @@ import 'package:plimsy/models/content.dart';
 import 'package:plimsy/services/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:plimsy/services/handler_error.dart';
-import 'package:plimsy/util/folder_create.dart';
 import 'package:plimsy/util/secure_auth_storage.dart';
 
-class HostService {
+class ContactUs {
   final ApiClient _apiClient = ApiClient(); // Per altri servizi
-  Future<Map<String, dynamic>> host(String apikey, Content content) async {
+  Future<Map<String, dynamic>> contactUs(String apikey, Content content) async {
     try {
       final token = await SecureAuthStorage.getToken();
-      print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  $apikey");
-      print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  BODY  ${content.body}");
 
       if (token != null) {
         print('Token recuperato in modo sicuro: $token');
@@ -36,23 +33,9 @@ class HostService {
       );
 
       if (response.statusCode == 200) {
-        print('Host richiamato con successo: ${response.data}');
+        print('RESPONSE CONTACT US: ${response.data}');
 
-        if (await response.data["content"] != null) {
-          final responseData = json.decode(response.data["content"]);
-          if (responseData["res"] != null &&
-              responseData["res"]["assets"] != null) {
-            SecureAuthStorage.saveAssetsToSecureStorage(
-                responseData["res"]["assets"]);
-            print("SALVATO");
-          }
-        } else {
-          print("La chiave 'content' è nulla nella risposta.");
-        }
-
-        print("ASSETS STORAGE ${await SecureAuthStorage.getAssets()}");
-        processAssets(response.data);
-        return response.data;
+        return jsonDecode(response.data);
       } else {
         throw Exception('Errore: ${response.statusCode}');
       }

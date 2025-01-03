@@ -85,7 +85,7 @@ class _MenuCalculate extends State<MenuCalculate>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      "assets/img/calculations-main/loadline-status.png",
+                      "assets/img/calculations-main/draft-icon.png",
                       width: width * 0.025,
                     ),
                     const Text(

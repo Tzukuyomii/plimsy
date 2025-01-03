@@ -46,7 +46,7 @@ class _OverallMenu extends State<OverallMenu> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Image.asset(
-              'assets/img/logos/white-logo.png',
+              'assets/img/logos/main-logo.png',
               width: width * 0.4,
             ),
             SizedBox(

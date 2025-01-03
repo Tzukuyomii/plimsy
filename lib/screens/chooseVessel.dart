@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/dto/user.dart';
 import 'package:plimsy/screens/home.dart';
+import 'package:plimsy/util/secure_auth_storage.dart';
 
 class ChooseVessel extends StatefulWidget {
   ChooseVessel({super.key, required this.user});
@@ -41,7 +42,8 @@ class _ChooseVessel extends State<ChooseVessel> {
               title: const Text("Seleziona un'imbarcazione!"),
               actions: [
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    SecureAuthStorage.clearStorage();
                     Navigator.of(context).pop();
                   },
                   child: const Text('Chiudi'),
@@ -101,7 +103,7 @@ class _ChooseVessel extends State<ChooseVessel> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Image.asset(
-                        "assets/img/logos/white-logo.png",
+                        "assets/img/logos/main-logo.png",
                         width: width * 0.3,
                       ),
                       SizedBox(

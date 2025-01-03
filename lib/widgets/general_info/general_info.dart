@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/widgets/general_info/button_modal_contact_us.dart';
 import 'package:plimsy/widgets/general_info/grid_info.dart';
 import 'package:plimsy/widgets/general_info/radio_button.dart';
 
 class GeneralInfo extends StatelessWidget {
-  const GeneralInfo({super.key, required this.changeSize});
+  GeneralInfo({super.key, required this.changeSize, required this.apiKey});
 
   final Function changeSize;
+  String apiKey;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class GeneralInfo extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image.asset(
-              "assets/img/logos/white-logo.png",
+              "assets/img/logos/main-logo.png",
               width: width * 0.3,
             ),
             SizedBox(
@@ -188,9 +190,8 @@ class GeneralInfo extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Image.asset(
-                    "assets/img/info-panel/contact-us-icon.png",
-                    width: width * 0.05,
+                  ButtonModalContactUs(
+                    apiKey: apiKey,
                   ),
                   SizedBox(
                     width: width * 0.04,

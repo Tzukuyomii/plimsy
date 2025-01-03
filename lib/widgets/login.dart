@@ -23,7 +23,7 @@ class Login extends StatelessWidget {
           passwordController.text,
         );
         // Naviga in base alla lunghezza dell'array hosts
-        if (user.hosts.length > 1) {
+        if (user.hosts.length <= 1) {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (ctx) => Home(

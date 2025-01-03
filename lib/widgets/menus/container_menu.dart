@@ -11,11 +11,13 @@ class ContainerMenu extends StatefulWidget {
       required this.isOpen,
       required this.fadeAnimation,
       required this.showContent,
-      required this.onDialogOpenChange});
+      required this.onDialogOpenChange,
+      required this.apiKey});
 
   late Animation<double> fadeAnimation;
   final Function onDialogOpenChange;
 
+  String apiKey;
   double containerWidth;
   double containerHeight;
   bool isOpen;
@@ -46,6 +48,7 @@ class _ContainerMenu extends State<ContainerMenu> {
         opacity: widget.fadeAnimation,
         child: widget.showContent
             ? GeneralInfo(
+                apiKey: widget.apiKey,
                 changeSize: widget.onDialogOpenChange,
               )
             : const OverallMenu(),
