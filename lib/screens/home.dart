@@ -26,11 +26,16 @@ class _Home extends State<Home> with TickerProviderStateMixin {
   bool showContent = false;
   HostService hostService = HostService();
   SecureAuthStorage storage = SecureAuthStorage();
+  Map<String, dynamic>? data;
+  bool isLoading = true;
 
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
 
   void _initializeContent() async {
+    setState(() {
+      isLoading = true;
+    });
     // Recupera gli assets salvati.
     final assets = await SecureAuthStorage.getAssets();
 
@@ -45,7 +50,12 @@ class _Home extends State<Home> with TickerProviderStateMixin {
     );
 
     // Avvia il servizio host.
-    hostService.host(widget.host.apiKey, content);
+
+    data = await hostService.host(widget.host.apiKey, content);
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -135,53 +145,60 @@ class _Home extends State<Home> with TickerProviderStateMixin {
           child: SizedBox(
             height: height,
             width: width,
-            child: Stack(
-              children: [
-                const Center(
-                  child: Model3DViewer(),
-                ),
-                Positioned(
-                  left: 5,
-                  child: CircleAvatar(
-                    backgroundColor: const Color.fromRGBO(1, 86, 118, 0.8),
-                    radius: 30,
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: const Icon(
-                        Icons.logout,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            child: isLoading
+                ? const CircularProgressIndicator()
+                : Stack(
                     children: [
-                      ContainerMenu(
-                        containerHeight: containerHeight(),
-                        containerWidth: containerWidth(),
-                        isOpen: isOpen,
-                        fadeAnimation: _fadeAnimation,
-                        showContent: showContent,
-                        onDialogOpenChange: changeSize,
-                        apiKey: widget.host.apiKey,
+                      const Center(
+                        child: Model3DViewer(),
                       ),
+                      Positioned(
+                        left: 5,
+                        child: CircleAvatar(
+                          backgroundColor:
+                              const Color.fromRGBO(1, 86, 118, 0.8),
+                          radius: 30,
+                          child: IconButton(
+                            onPressed: () {
+                              SecureAuthStorage.clearStorage();
+                              Navigator.of(context).pop();
+                            },
+                            icon: const Icon(
+                              Icons.logout,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ContainerMenu(
+                              containerHeight: containerHeight(),
+                              containerWidth: containerWidth(),
+                              isOpen: isOpen,
+                              fadeAnimation: _fadeAnimation,
+                              showContent: showContent,
+                              onDialogOpenChange: changeSize,
+                              apiKey: widget.host.apiKey,
+                              data: data!,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 5,
+                        right: 5,
+                        child: GeneralInfoContainer(
+                          onDialogOpenChange: changeSize,
+                          shipName: data!["generalInformation"]["SHIP NAME"],
+                          zone: data!["vesselZone"],
+                        ),
+                      )
                     ],
                   ),
-                ),
-                Positioned(
-                  bottom: 5,
-                  right: 5,
-                  child: GeneralInfoContainer(
-                    onDialogOpenChange: changeSize,
-                  ),
-                )
-              ],
-            ),
           ),
         ),
       ),

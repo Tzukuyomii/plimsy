@@ -4,7 +4,10 @@ import 'package:plimsy/screens/signal.dart';
 import 'package:plimsy/screens/stability.dart';
 
 class OverallMenu extends StatefulWidget {
-  const OverallMenu({super.key});
+  OverallMenu({super.key, required this.data});
+
+  Map<String, dynamic> data;
+
   @override
   State<OverallMenu> createState() {
     return _OverallMenu();
@@ -21,7 +24,9 @@ class _OverallMenu extends State<OverallMenu> {
         void stabilityButton() {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (ctx) => const Stability(),
+              builder: (ctx) => Stability(
+                data: widget.data,
+              ),
             ),
           );
         }

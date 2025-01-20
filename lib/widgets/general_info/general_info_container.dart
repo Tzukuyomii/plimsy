@@ -3,7 +3,14 @@ import 'package:plimsy/widgets/general_info/label.dart';
 
 class GeneralInfoContainer extends StatefulWidget {
   final Function onDialogOpenChange;
-  const GeneralInfoContainer({super.key, required this.onDialogOpenChange});
+  GeneralInfoContainer(
+      {super.key,
+      required this.onDialogOpenChange,
+      required this.shipName,
+      required this.zone});
+
+  String shipName;
+  String zone;
 
   @override
   State<GeneralInfoContainer> createState() {
@@ -27,8 +34,11 @@ class _GeneralInfoContainer extends State<GeneralInfoContainer> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Expanded(
-            child: Label(),
+          Expanded(
+            child: Label(
+              shipName: widget.shipName,
+              zone: widget.zone,
+            ),
           ),
           InkWell(
             onTap: () {

@@ -10,6 +10,8 @@ class Model3DViewer extends StatefulWidget {
 
 class _Model3DViewerState extends State<Model3DViewer> {
   Flutter3DController controller = Flutter3DController();
+  final String modelPath =
+      "file:///data/user/0/com.example.plimsy/app_flutter/services_folder/intact-model.gltf";
 
   @override
   void initState() {
@@ -21,7 +23,7 @@ class _Model3DViewerState extends State<Model3DViewer> {
   Widget build(BuildContext context) {
     return Flutter3DViewer(
       controller: controller,
-      src: "assets/img/3d-model/intact-model.gltf",
+      src: modelPath,
     );
   }
 }

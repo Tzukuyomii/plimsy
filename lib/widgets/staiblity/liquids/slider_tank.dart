@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:plimsy/data/tanks_data.dart';
 import 'package:plimsy/models/tank.dart';
 import 'package:flutter/services.dart';
 import 'package:plimsy/widgets/staiblity/liquids/liquid_painter.dart';
@@ -10,8 +9,12 @@ class SliderTank extends StatefulWidget {
       required this.selectedTank,
       required this.selectColor,
       required this.tanksData,
-      required this.updateTanks});
+      required this.updateTanks,
+      required this.isPools,
+      this.selectedTankId});
 
+  String? selectedTankId;
+  bool isPools;
   Function selectColor;
   Function updateTanks;
   String selectedTank;
@@ -43,6 +46,42 @@ class _SliderTank extends State<SliderTank>
     super.dispose();
   }
 
+  void logicPools(double value, Tank tank) {
+    if (widget.selectedTankId != "") {
+      // Ciclare i dati per trovare il tank con l'id selezionato
+      Tank selectedTank = widget.tanksData.entries
+          .where((entry) => entry.key == "POOL" || entry.key == "FRESH W.")
+          .expand((entry) => entry.value)
+          .firstWhere((tank) => tank.id == widget.selectedTankId);
+
+      // Verifica che il tank selezionato abbia litri disponibili
+      if (selectedTank.liters > 0 || value < tank.liters) {
+        // Calcolare la differenza tra il nuovo valore dello slider e il valore attuale
+        double difference = value - tank.liters;
+
+        // Aggiungere una piccola tolleranza per evitare problemi di arrotondamento
+        const double tolerance = 0.01;
+
+        if (difference > 0) {
+          // Se vuoi aumentare, verifica che il valore da aggiungere non superi i litri rimanenti nel tank selezionato
+          if (selectedTank.liters >= difference - tolerance) {
+            // Aggiorna i litri nel tank selezionato e nella piscina
+            selectedTank.liters -= difference;
+            tank.liters = value;
+          } else {
+            // Usa tutto ciò che resta nel tank selezionato
+            tank.liters += selectedTank.liters;
+            selectedTank.liters = 0;
+          }
+        } else if (difference < 0) {
+          // Se stai diminuendo lo slider, i litri tolti dalla piscina tornano nel tank selezionato
+          selectedTank.liters += -difference;
+          tank.liters = value;
+        }
+      }
+    }
+  }
+
   void inputChangeManage(value, tank) {
     setState(() {
       final double? parsedValue = double.tryParse(value);
@@ -62,6 +101,12 @@ class _SliderTank extends State<SliderTank>
   void inputChangePerManage(value, tank) {
     setState(() {
       final double? parsedValue = double.tryParse(value);
+      if (parsedValue == null) {
+        // Se il valore è vuoto, gestiscilo come un reset o un'azione predefinita
+
+        inputChangePerManage(
+            "0", tank); // Imposta il valore a 0% o a un valore predefinito
+      }
       if (parsedValue != null && parsedValue >= 0 && parsedValue <= 100) {
         // Calcola tank.liters in base alla percentuale
         tank.liters = (parsedValue / 100) * tank.maxCapacity;
@@ -70,35 +115,11 @@ class _SliderTank extends State<SliderTank>
       } else if (parsedValue != null && parsedValue > 100) {
         tank.liters = tank.maxCapacity;
       }
+      if (widget.isPools) {
+        // Se `isPools` è true, utilizza la logica per gestire le pools
+        logicPools(parsedValue!, tank);
+      }
     });
-  }
-
-  List _buildRowContent(String selected) {
-    switch (selected) {
-      case 'OIL':
-        return widget.tanksData["OIL"]!;
-
-      case 'FRESH WATER':
-        return widget.tanksData["FRESH WATER"]!;
-
-      case 'UREA':
-        return widget.tanksData["UREA"]!;
-
-      case 'FUEL':
-        return widget.tanksData["FUEL"]!;
-
-      case 'POOL':
-        return widget.tanksData["POOL"]!;
-
-      case 'SEWAGE':
-        return widget.tanksData["SEWAGE"]!;
-
-      case 'POOLS':
-        return mockPools.pools;
-
-      default:
-        return widget.tanksData["FUEL"]!;
-    }
   }
 
   @override
@@ -120,7 +141,7 @@ class _SliderTank extends State<SliderTank>
         child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: _buildRowContent(widget.selectedTank)
+            children: widget.tanksData[widget.selectedTank]!
                 .asMap()
                 .entries
                 .map((entry) {
@@ -145,7 +166,7 @@ class _SliderTank extends State<SliderTank>
                 padding: EdgeInsets.symmetric(
                     vertical: height * 0.01, horizontal: width * 0.009),
                 margin:
-                    index != _buildRowContent(widget.selectedTank).length - 1
+                    index != widget.tanksData[widget.selectedTank]!.length - 1
                         ? EdgeInsets.only(right: width * 0.01)
                         : EdgeInsets.zero,
                 decoration: BoxDecoration(
@@ -155,7 +176,7 @@ class _SliderTank extends State<SliderTank>
                 child: Column(
                   children: [
                     Text(
-                      tank.prefix,
+                      "${tank.id} ${tank.prefix}",
                       style: TextStyle(
                           color: widget.selectColor(widget.selectedTank),
                           fontSize: width * 0.01,
@@ -215,8 +236,10 @@ class _SliderTank extends State<SliderTank>
                                                   _controller.value,
                                                   widget.selectColor(
                                                       widget.selectedTank),
-                                                  double.parse(
-                                                      percentageSliderCon.text),
+                                                  double.tryParse(
+                                                          percentageSliderCon
+                                                              .text) ??
+                                                      0.0,
                                                 ),
                                                 child: const SizedBox.expand(),
                                               );
@@ -247,16 +270,14 @@ class _SliderTank extends State<SliderTank>
                                 divisions: 100,
                                 onChanged: (double value) {
                                   setState(() {
-                                    tank.liters = value;
-                                    if (widget.selectedTank == "POOLS") {
-                                      widget.updateTanks(
-                                          widget.selectedTank, mockPools.pools);
+                                    if (widget.isPools) {
+                                      logicPools(value, tank);
                                     } else {
-                                      widget.updateTanks(
-                                          widget.selectedTank,
-                                          widget
-                                              .tanksData[widget.selectedTank]!);
+                                      tank.liters = value;
                                     }
+
+                                    widget.updateTanks(widget.selectedTank,
+                                        widget.tanksData[widget.selectedTank]!);
                                   });
                                 },
                                 label: tank.liters.round().toString(),
@@ -273,6 +294,7 @@ class _SliderTank extends State<SliderTank>
                           width: width * 0.035,
                           height: height * 0.025,
                           child: TextField(
+                            keyboardType: TextInputType.number,
                             textAlign: TextAlign.end,
                             cursorColor: Colors.white,
                             style: TextStyle(
@@ -340,7 +362,15 @@ class _SliderTank extends State<SliderTank>
                               filled: false, // Rimuove il background
                             ),
                             onSubmitted: (value) {
-                              inputChangeManage(value, tank);
+                              if (widget.isPools) {
+                                final doubleValue = double.tryParse(value);
+                                logicPools(doubleValue!, tank);
+                              } else {
+                                inputChangeManage(value, tank);
+                              }
+
+                              widget.updateTanks(widget.selectedTank,
+                                  widget.tanksData[widget.selectedTank]!);
                             },
                           ),
                         ),

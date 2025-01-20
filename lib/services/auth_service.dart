@@ -45,13 +45,7 @@ class AuthService {
     }
   }
 
-  Future<void> refreshAccessToken() async {
-    final refreshToken = await SecureAuthStorage.getRefreshToken();
-
-    if (refreshToken == null) {
-      throw Exception('Refresh token mancante. Effettua nuovamente il login.');
-    }
-
+  Future<void> refreshAccessToken(String refreshToken) async {
     final response = await _dio.post(
       _tokenEndpoint,
       data: {

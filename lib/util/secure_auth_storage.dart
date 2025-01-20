@@ -33,11 +33,11 @@ class SecureAuthStorage {
       final String? existingAssetsJson = await _storage.read(key: 'assets');
       Map<String, String> existingAssets = {};
 
-      // if (existingAssetsJson != null) {
-      //   // Decodifica gli asset esistenti se presenti
-      //   existingAssets =
-      //       Map<String, String>.from(json.decode(existingAssetsJson));
-      // }
+      if (existingAssetsJson != null) {
+        // Decodifica gli asset esistenti se presenti
+        existingAssets =
+            Map<String, String>.from(json.decode(existingAssetsJson));
+      }
 
       // Aggiorna gli asset esistenti con quelli ricevuti dal server
       for (var newAsset in newAssets) {

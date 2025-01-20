@@ -43,6 +43,7 @@ dependencies:
   dio: ^5.7.0
   flutter_secure_storage: ^9.2.2
   path_provider: ^2.1.5
+  flutter_pdfview: ^1.4.0
 
 dev_dependencies:
   flutter_test:
@@ -111,10 +112,6 @@ flutter:
     - assets/img/liquid-weights-pic/pool.png
     - assets/img/liquid-weights-pic/sewage.png
     - assets/img/liquid-weights-pic/urea.png
-    - assets/img/fixed-dw-ga/main-deck.png
-    - assets/img/fixed-dw-ga/lower-deck.png
-    - assets/img/fixed-dw-ga/observation-deck.png
-    - assets/img/fixed-dw-ga/upper-deck.png
     - assets/img/3d-model/intact-model.gltf
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

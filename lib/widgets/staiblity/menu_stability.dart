@@ -6,10 +6,14 @@ import 'package:plimsy/widgets/staiblity/menu_liquids.dart';
 
 class MenuStability extends StatefulWidget {
   MenuStability(
-      {super.key, required this.changeContent, required this.showContent});
+      {super.key,
+      required this.changeContent,
+      required this.showContent,
+      required this.data});
 
   String showContent;
   Function changeContent;
+  Map<String, dynamic> data;
 
   @override
   State<MenuStability> createState() {
@@ -282,7 +286,10 @@ class _MenuStability extends State<MenuStability>
                   ),
                 ],
               ),
-              const Label()
+              Label(
+                shipName: widget.data["generalInformation"]["SHIP NAME"],
+                zone: widget.data["generalInformation"]["FLAG"],
+              )
             ],
           ),
         )

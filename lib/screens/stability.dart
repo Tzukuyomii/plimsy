@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:plimsy/data/tanks_data.dart';
 import 'package:plimsy/models/tank.dart';
 import 'package:plimsy/widgets/staiblity/calculation/draft.dart';
 import 'package:plimsy/widgets/staiblity/fixed/fixed.dart';
@@ -8,7 +7,9 @@ import 'package:plimsy/widgets/staiblity/menu_stability.dart';
 import 'package:plimsy/widgets/staiblity/liquids/tanks.dart';
 
 class Stability extends StatefulWidget {
-  const Stability({super.key});
+  Stability({super.key, required this.data});
+
+  Map<String, dynamic> data;
 
   @override
   State<Stability> createState() {
@@ -18,42 +19,104 @@ class Stability extends StatefulWidget {
 
 class _Stability extends State<Stability> {
   final Map<String, ValueNotifier<double>> percentageNotifiers = {};
-  String showContent = "";
+  String showContent = "Tanks";
 
-  final Map<String, List<Tank>> allTanks = {
-    "FUEL": mockTanks.fuel,
-    "OIL": mockTanks.oil,
-    "FRESH WATER": mockTanks.freshW,
-    "UREA": mockTanks.urea,
-    "POOL": mockTanks.pool,
-    "SEWAGE": mockTanks.sewage,
-  };
+  late Map<String, List<Tank>> allTanks;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Parsing dei tanks
+    final rawTanks = widget.data["vesselTanks"]["tanks"];
+
+    // Parsing delle pools
+    final rawPools = widget.data["vesselPools"]["pools"] ?? [];
+
+    // Combina tanks e pools
+    allTanks = parseTanksWithPools(rawTanks, rawPools);
+  }
+
+  /// Funzione per combinare tanks e pools
+  Map<String, List<Tank>> parseTanksWithPools(
+      Map<String, dynamic> rawTanks, List<dynamic> rawPools) {
+    final Map<String, List<Tank>> parsedTanks = {};
+
+    // Parsing dei tanks
+    rawTanks.forEach((key, value) {
+      parsedTanks[key.toUpperCase()] = (value as List<dynamic>).map((tank) {
+        return Tank(
+          id: tank["id"].toString(),
+          maxCapacity: _toDouble(tank["maxCapacity"]),
+          liters: _toDouble(tank["liters"]),
+          prefix: tank["prefix"] ?? "",
+          permeability: _toDouble(tank["permeability"]),
+          weightSpec: _toDouble(tank["weightSpec"]),
+        );
+      }).toList();
+    });
+
+    // Aggiunta delle pools sotto il gruppo "POOLS"
+    if (rawPools.isNotEmpty) {
+      parsedTanks["POOLS"] = rawPools.map((pool) {
+        return Tank(
+          id: pool["id"].toString(),
+          maxCapacity: _toDouble(pool["maxCapacity"]),
+          liters: _toDouble(pool["liters"]),
+          prefix: pool["prefix"] ?? "",
+          permeability: _toDouble(pool["permeability"]),
+          weightSpec: _toDouble(pool["weightSpec"]),
+        );
+      }).toList();
+    }
+
+    return parsedTanks;
+  }
+
+  /// Funzione di utilità per convertire qualsiasi valore in double.
+  double _toDouble(dynamic value) {
+    if (value == null) {
+      return 0.0;
+    }
+    if (value is int) {
+      return value.toDouble();
+    }
+    if (value is double) {
+      return value;
+    }
+    // Per gestire eventuali valori che non sono int o double (edge cases).
+    throw ArgumentError("Valore non convertibile in double: $value");
+  }
 
   void updateTanks(String tankType, List<Tank> updatedTanks) {
     setState(() {
-      if (tankType == "POOLS") {
-        mockPools.pools = updatedTanks;
-      } else {
-        allTanks[tankType] = updatedTanks;
-      }
+      allTanks[tankType] = updatedTanks;
     });
   }
 
   Color selectColor(String prefix) {
-    if (prefix == "OIL") {
-      return Colors.yellow;
-    } else if (prefix == "FRESH WATER") {
-      return Colors.blue.shade100;
-    } else if (prefix == "UREA") {
-      return Colors.green.shade200;
-    } else if (prefix == "FUEL") {
-      return Colors.red.shade100;
-    } else if (prefix == "POOL" || prefix == "POOLS") {
-      return Colors.lightBlueAccent.shade100;
-    } else if (prefix == "SEWAGE") {
-      return Colors.teal.shade100;
+    // Convertiamo il prefix in lowercase per abbinarlo ai dati del servizio
+    String lowerCasePrefix = prefix.toLowerCase();
+
+    // Cerchiamo il colore nella mappa restituita dal servizio
+    String? hexColor = widget.data["tankTypeColors"][lowerCasePrefix];
+
+    // Se il colore esiste, lo convertiamo da hex a Color
+    if (hexColor != null) {
+      return _hexToColor(hexColor);
+    }
+
+    // Altrimenti, restituiamo un colore di default
+    return Colors.white;
+  }
+
+  /// Converte un colore in formato #RRGGBB in un oggetto Color
+  Color _hexToColor(String hexColor) {
+    hexColor = hexColor.replaceAll('#', '');
+    if (hexColor.length == 6) {
+      return Color(int.parse('FF$hexColor', radix: 16));
     } else {
-      return Colors.white;
+      throw ArgumentError("Formato colore non valido: $hexColor");
     }
   }
 
@@ -89,6 +152,7 @@ class _Stability extends State<Stability> {
               MenuStability(
                 changeContent: changeContent,
                 showContent: showContent,
+                data: widget.data,
               ),
               if (showContent == "Tanks")
                 Tanks(

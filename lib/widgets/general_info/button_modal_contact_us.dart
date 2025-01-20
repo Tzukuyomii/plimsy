@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/models/content.dart';
 import 'package:plimsy/services/contact_us.dart';
-import 'package:plimsy/services/host.dart';
 import 'package:plimsy/widgets/general_info/custom_radio_buttons.dart';
 import 'package:plimsy/widgets/general_info/custom_text_field.dart';
 import 'package:plimsy/models/form_model.dart';
@@ -18,19 +17,26 @@ class ButtonModalContactUs extends StatefulWidget {
 
 class _ButtonModalContactUs extends State<ButtonModalContactUs> {
   ContactUs contactUs = ContactUs();
-  FormModel form = FormModel(requestType: "", email: "", description: "");
-  String? response;
+  FormModel form = FormModel(requestType: "ask", email: "", description: "");
+  bool _isEmailValid = false; // Stato per gestire la validità dell'email
 
   void sendForm() async {
     Content content = Content(request: "form-request", body: form);
-    final res = await contactUs.contactUs(widget.apiKey, content);
-    print("REEEEEESSSSSSSS$res");
+    if (_isEmailValid) {
+      final response = await contactUs.contactUs(widget.apiKey, content);
 
-    // Messaggio di successo
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${res["message"]}')),
-    );
-    Navigator.pop(context);
+      // Messaggio di successo
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${response["res"]["message"]}')),
+      );
+      _isEmailValid = false;
+      Navigator.pop(context);
+    } else {
+      // Messaggio di successo
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Email non valida')),
+      );
+    }
   }
 
   @override
@@ -101,6 +107,10 @@ class _ButtonModalContactUs extends State<ButtonModalContactUs> {
                         onChanged: (value) {
                           setState(() {
                             form.email = value;
+                            _isEmailValid = RegExp(
+                                    r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(it|com)$")
+                                .hasMatch(value);
+                            print("VALIDATE $_isEmailValid");
                           });
                         },
                       ),

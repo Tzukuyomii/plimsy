@@ -1,21 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/widgets/general_info/button_modal_contact_us.dart';
 import 'package:plimsy/widgets/general_info/grid_info.dart';
+import 'package:plimsy/widgets/general_info/pdf_viewer.dart';
 import 'package:plimsy/widgets/general_info/radio_button.dart';
 
-class GeneralInfo extends StatelessWidget {
-  GeneralInfo({super.key, required this.changeSize, required this.apiKey});
+class GeneralInfo extends StatefulWidget {
+  GeneralInfo(
+      {super.key,
+      required this.changeSize,
+      required this.apiKey,
+      required this.data});
 
   final Function changeSize;
   String apiKey;
+  Map<String, dynamic> data;
+
+  @override
+  State<StatefulWidget> createState() {
+    return _GeneralInfo();
+  }
+}
+
+class _GeneralInfo extends State<GeneralInfo> {
+  final TextEditingController _controller = TextEditingController();
+
+  // Valore selezionato per il RadioButton
+  String _selectedOption = "2";
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.text = "1.025"; // Valore iniziale del TextField
+  }
+
+  void _onRadioButtonChanged(String value) {
+    setState(() {
+      _selectedOption = value;
+
+      // Aggiorna il valore del TextField in base al RadioButton selezionato
+      if (value == "2") {
+        _controller.text = "1.025";
+      } else if (value == "1") {
+        _controller.text = "1.100";
+      } else if (value == "3") {
+        _controller.text = "1.200";
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
-    final TextEditingController _controller =
-        TextEditingController(text: "1.025");
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -30,11 +67,14 @@ class GeneralInfo extends StatelessWidget {
             SizedBox(
               height: height * 0.4,
               width: width * 0.4,
-              child: const GridInfo(),
+              child: GridInfo(
+                generalInformation: widget.data["generalInformation"],
+                vesselHydrostaticData: widget.data["vesselHydrostaticData"],
+              ),
             ),
             InkWell(
               onTap: () {
-                changeSize();
+                widget.changeSize();
               },
               child: Image.asset(
                 "assets/img/info-panel/go-back-icon.png",
@@ -57,23 +97,25 @@ class GeneralInfo extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       "General Settings",
                       style: TextStyle(
-                          fontSize: 24,
+                          fontSize: width * 0.015,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
-                    const SizedBox(
-                        height: 8), // Spazio tra il titolo e la linea
+                    SizedBox(
+                        height:
+                            height * 0.003), // Spazio tra il titolo e la linea
                     const Divider(color: Colors.white), // Linea sotto il titolo
-                    const SizedBox(
-                        height: 16), // Spazio tra la linea e il primo input
+                    SizedBox(
+                        height: height *
+                            0.03), // Spazio tra la linea e il primo input
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          "Sea Wateer Density",
+                          "Sea Water Density",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -123,8 +165,8 @@ class GeneralInfo extends StatelessWidget {
                                         left: 16, right: 4)),
                               ),
                             ),
-                            const SizedBox(
-                              width: 5,
+                            SizedBox(
+                              width: width * 0.002,
                             ),
                             const Text(
                               "t/m³",
@@ -139,17 +181,20 @@ class GeneralInfo extends StatelessWidget {
                     ),
                     const SizedBox(
                         height: 16), // Spazio tra l'input e la sezione radio
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           "Force Heeling",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
-                        RadioButton()
+                        RadioButton(
+                          onRadioButtonChange: _onRadioButtonChanged,
+                          selecteOption: _selectedOption,
+                        )
                       ],
                     ),
                     const SizedBox(
@@ -191,14 +236,24 @@ class GeneralInfo extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ButtonModalContactUs(
-                    apiKey: apiKey,
+                    apiKey: widget.apiKey,
                   ),
                   SizedBox(
                     width: width * 0.04,
                   ),
-                  Image.asset(
-                    "assets/img/info-panel/help-icon.png",
-                    width: width * 0.05,
+                  InkWell(
+                    onTap: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PdfViewerDialog(),
+                        ),
+                      )
+                    },
+                    child: Image.asset(
+                      "assets/img/info-panel/help-icon.png",
+                      width: width * 0.05,
+                    ),
                   ),
                 ],
               )

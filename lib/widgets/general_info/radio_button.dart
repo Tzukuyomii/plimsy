@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class RadioButton extends StatefulWidget {
-  const RadioButton({super.key});
+  RadioButton(
+      {super.key,
+      required this.onRadioButtonChange,
+      required this.selecteOption});
+
+  Function onRadioButtonChange;
+  String selecteOption;
 
   @override
   State<RadioButton> createState() {
@@ -10,7 +16,7 @@ class RadioButton extends StatefulWidget {
 }
 
 class _RadioButton extends State<RadioButton> {
-  String? selectedOption = "2";
+  String selectedOption = "2";
 
   BorderRadiusGeometry? borderRadiobutton(String value) {
     BorderRadiusGeometry? borderRadius;
@@ -47,11 +53,12 @@ class _RadioButton extends State<RadioButton> {
 
   Widget _buildCustomRadioButton(
       String value, String title, String indexRadio) {
-    bool isSelected = selectedOption == value; // Controlla se è selezionato
+    bool isSelected =
+        widget.selecteOption == value; // Controlla se è selezionato
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedOption = value; // Aggiorna la selezione
+          widget.onRadioButtonChange(value);
         });
       },
       child: AnimatedContainer(

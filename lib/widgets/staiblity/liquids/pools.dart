@@ -4,6 +4,7 @@ import 'package:plimsy/models/tank.dart';
 import 'package:plimsy/widgets/3d_model/model3d_viewer.dart';
 import 'package:plimsy/widgets/staiblity/liquids/dynamic_radio_button.dart';
 import 'package:plimsy/widgets/staiblity/liquids/liquids_on_board_container.dart';
+import 'package:plimsy/widgets/staiblity/liquids/pool_text_handler.dart';
 import 'package:plimsy/widgets/staiblity/liquids/slider_tank.dart';
 
 class Pools extends StatefulWidget {
@@ -27,6 +28,15 @@ class Pools extends StatefulWidget {
 }
 
 class _Pools extends State<Pools> with TickerProviderStateMixin {
+  String _selectedTank = '';
+
+  // Funzione per aggiornare il selectedTank
+  void updateSelectedTank(String selectedTank) {
+    setState(() {
+      _selectedTank = selectedTank;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -64,12 +74,17 @@ class _Pools extends State<Pools> with TickerProviderStateMixin {
                           tanksData: widget.tanks,
                           selectedTank: "POOLS",
                           selectColor: widget.selectColor,
+                          isPools: true,
+                          selectedTankId: _selectedTank,
                         ),
                       ),
                     ),
-                    const Align(
+                    Align(
                       alignment: Alignment.centerRight,
-                      child: DynamicRadioButtons(),
+                      child: DynamicRadioButtons(
+                        onTankSelected: updateSelectedTank,
+                        tanks: widget.tanks,
+                      ),
                     ),
                   ],
                 ),
@@ -84,27 +99,7 @@ class _Pools extends State<Pools> with TickerProviderStateMixin {
                   width: width * 0.3,
                   child: Padding(
                     padding: EdgeInsets.all(width * 0.01),
-                    child: Column(
-                      children: [
-                        Text(warningPools,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: width * 0.01,
-                            ),
-                            textAlign: TextAlign.center),
-                        SizedBox(
-                          height: height * 0.01,
-                        ),
-                        Text(
-                          notePools,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: width * 0.01,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
+                    child: PoolTextHandler(tanks: widget.tanks),
                   ),
                 ),
               )

@@ -53,7 +53,14 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    widget.percentageNotifier.values.forEach((notifier) => notifier.dispose());
+    widget.percentageNotifier.forEach((tankType, notifier) {
+      // Controlla se il tankType è uno di quelli che non devono essere eliminati
+      if (tankType != "FRESH W." && tankType != "POOL" && tankType != "POOLS") {
+        notifier
+            .dispose(); // Dispose solo se il tipo non è tra quelli da ignorare
+      }
+    });
+
     _controller.dispose();
     super.dispose();
   }
@@ -66,7 +73,7 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
       if (selectedTank == "OIL") {
         img = "assets/img/liquid-weights-pic/oil.png";
       }
-      if (selectedTank == "FRESH WATER") {
+      if (selectedTank == "FRESH W.") {
         img = "assets/img/liquid-weights-pic/fresh_w.png";
       }
       if (selectedTank == "UREA") {
@@ -119,7 +126,9 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: widget.tanks.entries.map((entry) {
+              children: widget.tanks.entries
+                  .where((entry) => entry.key != "POOLS")
+                  .map((entry) {
                 return InkWell(
                   onTap: () {
                     setState(() {
@@ -172,6 +181,7 @@ class _Tanks extends State<Tanks> with SingleTickerProviderStateMixin {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: SliderTank(
+                    isPools: false,
                     updateTanks: updateTanks,
                     tanksData: widget.tanks,
                     selectedTank: selectedTank,

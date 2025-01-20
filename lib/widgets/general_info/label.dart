@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class Label extends StatefulWidget {
-  const Label({super.key});
+  Label({super.key, required this.shipName, required this.zone});
+
+  String shipName;
+  String zone;
 
   @override
   _LabelState createState() => _LabelState();
@@ -41,11 +44,13 @@ class _LabelState extends State<Label> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return Column(
       children: [
-        const Row(
+        Row(
           children: [
-            Text(
+            const Text(
               'YACHT:',
               style: TextStyle(
                   color: Colors.white,
@@ -53,11 +58,11 @@ class _LabelState extends State<Label> {
                   fontSize: 16),
             ),
             SizedBox(
-              width: 15,
+              width: width * 0.015,
             ),
             Text(
-              'MY U-FORCE',
-              style: TextStyle(
+              'MY ${widget.shipName}',
+              style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 16),
@@ -73,8 +78,8 @@ class _LabelState extends State<Label> {
                   fontWeight: FontWeight.bold,
                   fontSize: 16),
             ),
-            const SizedBox(
-              width: 15,
+            SizedBox(
+              width: width * 0.015,
             ),
             Text(
               _currentTime,
@@ -85,9 +90,9 @@ class _LabelState extends State<Label> {
             ),
           ],
         ),
-        const Row(
+        Row(
           children: [
-            Text(
+            const Text(
               'ZONE:',
               style: TextStyle(
                   color: Colors.white,
@@ -95,11 +100,11 @@ class _LabelState extends State<Label> {
                   fontSize: 16),
             ),
             SizedBox(
-              width: 15,
+              width: width * 0.015,
             ),
             Text(
-              'HAWAII (USA)',
-              style: TextStyle(
+              widget.zone,
+              style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 16),

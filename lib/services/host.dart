@@ -9,17 +9,12 @@ import 'package:plimsy/util/secure_auth_storage.dart';
 
 class HostService {
   final ApiClient _apiClient = ApiClient(); // Per altri servizi
+
   Future<Map<String, dynamic>> host(String apikey, Content content) async {
     try {
-      final token = await SecureAuthStorage.getToken();
       print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  $apikey");
       print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  BODY  ${content.body}");
 
-      if (token != null) {
-        print('Token recuperato in modo sicuro: $token');
-      } else {
-        print('Nessun token salvato.');
-      }
       final response = await _apiClient.dio.post(
         "/api/rest-services/v1/hosts/send",
         data: {
@@ -27,21 +22,16 @@ class HostService {
           "contentType": "text/plain",
           "hostId": apikey
         },
-        options: Options(
-          headers: {
-            "Authorization": "Bearer $token", // Aggiungi il prefisso "Bearer"
-            "Content-Type": "application/json",
-          },
-        ),
       );
 
       if (response.statusCode == 200) {
         print('Host richiamato con successo: ${response.data}');
+        final responseData = json.decode(response.data["content"]);
 
         if (await response.data["content"] != null) {
-          final responseData = json.decode(response.data["content"]);
           if (responseData["res"] != null &&
               responseData["res"]["assets"] != null) {
+            processAssets(responseData["res"]["assets"]);
             SecureAuthStorage.saveAssetsToSecureStorage(
                 responseData["res"]["assets"]);
             print("SALVATO");
@@ -51,8 +41,8 @@ class HostService {
         }
 
         print("ASSETS STORAGE ${await SecureAuthStorage.getAssets()}");
-        processAssets(response.data);
-        return response.data;
+
+        return jsonDecode(responseData["res"]["data"]);
       } else {
         throw Exception('Errore: ${response.statusCode}');
       }

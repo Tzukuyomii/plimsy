@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:plimsy/widgets/staiblity/fixed/fixed_accordion.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Fixed extends StatefulWidget {
   const Fixed({super.key});
@@ -12,21 +15,53 @@ class Fixed extends StatefulWidget {
 
 class _Fixed extends State<Fixed> with TickerProviderStateMixin {
   Offset? _tapPosition; // Per tracciare il punto del click
-  String _dropdownValue = 'main-deck'; // Valore iniziale del menu a tendina
+  String _dropdownValue = "";
+  List<String> _imagePaths = [];
   final TransformationController _transformationController =
       TransformationController(); // Controller per trasformazioni
 
-  String _getImageForSelectedOption() {
-    switch (_dropdownValue) {
-      case 'main-deck':
-        return 'assets/img/fixed-dw-ga/main-deck.png'; // Sostituisci con i tuoi percorsi
-      case 'lower-deck':
-        return 'assets/img/fixed-dw-ga/lower-deck.png';
-      case 'observation-deck':
-        return 'assets/img/fixed-dw-ga/observation-deck.png';
-      default:
-        return 'assets/img/fixed-dw-ga/upper-deck.png'; // Immagine di default
+  Future<void> _loadImages() async {
+    try {
+      // Ottieni il percorso della directory
+      final directory = await getApplicationDocumentsDirectory();
+      final imageDir = Directory('${directory.path}/services_folder');
+
+      if (await imageDir.exists()) {
+        // Filtra i file che contengono "-deck" nel nome e hanno estensione immagine
+        final images = imageDir
+            .listSync()
+            .where((file) =>
+                file is File &&
+                file.path.endsWith(
+                    '.webp') && // Filtra solo le immagini con estensione webp
+                file.path
+                    .contains('-deck')) // Filtra i nomi che contengono "-deck"
+            .map((file) => file.path)
+            .toList();
+
+        // Ordina le immagini per mettere "main-deck" come prima (se esiste)
+        images.sort((a, b) {
+          if (a.contains('main-deck')) return -1;
+          if (b.contains('main-deck')) return 1;
+          return 0;
+        });
+
+        // Aggiorna lo stato con le immagini caricate
+        setState(() {
+          _imagePaths = images;
+          _dropdownValue =
+              _imagePaths.first; // Imposta "main-deck" come valore iniziale
+        });
+      }
+    } catch (e) {
+      print('Errore nel caricamento delle immagini: $e');
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImages(); // Carica le immagini all'avvio del widget
   }
 
   @override
@@ -69,10 +104,12 @@ class _Fixed extends State<Fixed> with TickerProviderStateMixin {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     image: DecorationImage(
-                      image: AssetImage(
-                        _getImageForSelectedOption(),
-                      ), // Immagine dinamica
-                      fit: BoxFit.contain,
+                      image: FileImage(
+                        _dropdownValue != ""
+                            ? File(_dropdownValue)
+                            : File(
+                                "/data/user/0/com.example.plimsy/app_flutter/services_folder/main-deck.webp"),
+                      ),
                     ),
                   ),
                   child: _tapPosition != null
@@ -102,14 +139,16 @@ class _Fixed extends State<Fixed> with TickerProviderStateMixin {
                   alignment: Alignment.topCenter,
                   child: DropdownButton<String>(
                     value: _dropdownValue,
-                    items: <String>[
-                      'main-deck',
-                      'lower-deck',
-                      'observation-deck'
-                    ].map((String value) {
+                    items: _imagePaths.map((String path) {
                       return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
+                        value: path,
+                        child: Text(
+                          path
+                              .split('/')
+                              .last
+                              .split('.')
+                              .first, // Rimuove directory ed estensione
+                        ), // Mostra solo il nome del file
                       );
                     }).toList(),
                     onChanged: (String? newValue) {

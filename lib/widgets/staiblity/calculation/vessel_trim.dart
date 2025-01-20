@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class VesselTrim extends StatefulWidget {
@@ -11,6 +13,8 @@ class VesselTrim extends StatefulWidget {
 class _VesselTrim extends State<VesselTrim> {
   final double _trimValue = 0;
   final double _heelValue = 0;
+  final String trimImagePath =
+      "/data/user/0/com.example.plimsy/app_flutter/services_folder/trim-icon.webp";
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -24,8 +28,8 @@ class _VesselTrim extends State<VesselTrim> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  "assets/img/calculations-main/trim-icon(placeholder).png",
+                Image.file(
+                  File(trimImagePath),
                   width: width * 0.2,
                 ),
                 Container(

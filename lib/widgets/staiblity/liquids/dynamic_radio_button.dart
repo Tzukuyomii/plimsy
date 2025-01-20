@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/models/tank.dart';
 
 class DynamicRadioButtons extends StatefulWidget {
-  const DynamicRadioButtons({super.key});
+  DynamicRadioButtons(
+      {super.key, required this.onTankSelected, required this.tanks});
+
+  final Function(String) onTankSelected;
+  Map<String, List<Tank>> tanks;
 
   @override
   State<DynamicRadioButtons> createState() => _DynamicRadioButtonsState();
@@ -9,17 +14,12 @@ class DynamicRadioButtons extends StatefulWidget {
 
 class _DynamicRadioButtonsState extends State<DynamicRadioButtons> {
   String _selectedOption = ''; // Memorizza l'opzione selezionata
-  final List<String> options = [
-    'F.W. 14',
-    'F.W. 21',
-    'F.W. 23',
-    'P.T. 25'
-  ]; // Lista dinamica
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -34,12 +34,18 @@ class _DynamicRadioButtonsState extends State<DynamicRadioButtons> {
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: options.map((option) {
+            children: widget.tanks.entries
+                .where(
+                    (entry) => entry.key == "POOL" || entry.key == "FRESH W.")
+                .expand((entry) => entry.value)
+                .map((tank) {
               return GestureDetector(
                 onTap: () {
                   setState(() {
-                    _selectedOption = option;
+                    _selectedOption = tank.id;
                   });
+                  widget.onTankSelected(tank.id);
+                  print(" OPTION ${tank.id}");
                 },
                 child: Row(
                   children: [
@@ -48,7 +54,7 @@ class _DynamicRadioButtonsState extends State<DynamicRadioButtons> {
                       padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _selectedOption == option
+                        color: _selectedOption == tank.id
                             ? Colors.white
                             : Colors.transparent,
                         border: Border.all(
@@ -61,7 +67,7 @@ class _DynamicRadioButtonsState extends State<DynamicRadioButtons> {
                         height: 12,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: _selectedOption == option
+                          color: _selectedOption == tank.id
                               ? Colors.lightBlueAccent.shade100
                               : Colors.transparent,
                         ),
@@ -70,7 +76,7 @@ class _DynamicRadioButtonsState extends State<DynamicRadioButtons> {
                     const SizedBox(height: 4),
                     // Testo del radio button
                     Text(
-                      option,
+                      "${tank.prefix} ${tank.id}",
                       style: TextStyle(
                           color: Colors.white, fontSize: width * 0.01),
                     ),
@@ -90,22 +96,33 @@ class _DynamicRadioButtonsState extends State<DynamicRadioButtons> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Current: 0.0 lt.',
-                  style: TextStyle(
-                      color: Colors.lightBlueAccent.shade100,
-                      fontSize: width * 0.01),
-                ),
-                Text(
-                  'Max cap: 0.0 lt.',
-                  style: TextStyle(
-                      color: Colors.lightBlueAccent.shade100,
-                      fontSize: width * 0.01),
-                ),
-              ],
-            ),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widget.tanks.entries
+                    .where((entry) =>
+                        entry.key == "POOL" || entry.key == "FRESH W.")
+                    .expand((entry) => entry.value)
+                    .where((tank) =>
+                        tank.id ==
+                        _selectedOption) // Filtra solo il tank selezionato
+                    .map((tank) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Current: ${tank.liters.toStringAsFixed(2)} lt.',
+                        style: TextStyle(
+                            color: Colors.lightBlueAccent.shade100,
+                            fontSize: width * 0.01),
+                      ),
+                      Text(
+                        'Max cap: ${tank.maxCapacity.toStringAsFixed(2)} lt.',
+                        style: TextStyle(
+                            color: Colors.lightBlueAccent.shade100,
+                            fontSize: width * 0.01),
+                      ),
+                    ],
+                  );
+                }).toList()),
           ),
       ],
     );
