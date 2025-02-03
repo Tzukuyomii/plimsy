@@ -3,7 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class VesselTrim extends StatefulWidget {
-  const VesselTrim({super.key});
+  VesselTrim({super.key, this.vesselImmersion, this.trimValue, this.heelValue});
+
+  Map<String, dynamic>? vesselImmersion;
+  final String? trimValue;
+  final String? heelValue;
+
   @override
   State<VesselTrim> createState() {
     return _VesselTrim();
@@ -11,12 +16,12 @@ class VesselTrim extends StatefulWidget {
 }
 
 class _VesselTrim extends State<VesselTrim> {
-  final double _trimValue = 0;
-  final double _heelValue = 0;
   final String trimImagePath =
       "/data/user/0/com.example.plimsy/app_flutter/services_folder/trim-icon.webp";
   @override
   Widget build(BuildContext context) {
+    double trimValue = double.parse(widget.trimValue!.replaceAll("°", ""));
+    double heelValue = double.parse(widget.heelValue!.replaceAll("°", ""));
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Row(
@@ -65,13 +70,13 @@ class _VesselTrim extends State<VesselTrim> {
                     children: [
                       Icon(
                         Icons.arrow_drop_down,
-                        color: _trimValue < 0
+                        color: trimValue < 0
                             ? const Color.fromARGB(255, 248, 18, 1)
                             : Colors.grey,
                         size: width * 0.03,
                       ),
                       Text(
-                        "$_trimValue",
+                        "${widget.trimValue}",
                         style: TextStyle(
                           fontSize: width * 0.0099,
                           color: Colors.white, // Colore del testo
@@ -79,7 +84,7 @@ class _VesselTrim extends State<VesselTrim> {
                       ),
                       Icon(
                         Icons.arrow_drop_down,
-                        color: _trimValue > 0
+                        color: trimValue > 0
                             ? const Color.fromARGB(255, 248, 18, 1)
                             : Colors.grey,
                         size: width * 0.03,
@@ -150,14 +155,14 @@ class _VesselTrim extends State<VesselTrim> {
                       angle: 0.5 * 3.14159,
                       child: Icon(
                         Icons.arrow_drop_down,
-                        color: _heelValue < 0
+                        color: heelValue < 0
                             ? const Color.fromARGB(255, 248, 18, 1)
                             : Colors.grey,
                         size: width * 0.03,
                       ),
                     ),
                     Text(
-                      "$_heelValue",
+                      "${widget.heelValue}",
                       style: TextStyle(
                         fontSize: width * 0.0099,
                         color: Colors.white, // Colore del testo
@@ -167,7 +172,7 @@ class _VesselTrim extends State<VesselTrim> {
                       angle: 1.5 * 3.14159, // Rotate 270 degrees (pi/2 * 3)
                       child: Icon(
                         Icons.arrow_drop_down,
-                        color: _heelValue > 0
+                        color: heelValue > 0
                             ? const Color.fromARGB(255, 248, 18, 1)
                             : Colors.grey,
                         size: width * 0.03,
@@ -198,7 +203,7 @@ class _VesselTrim extends State<VesselTrim> {
                           ),
                         ),
                         Text(
-                          "-",
+                          widget.vesselImmersion?["mAftSx"] ?? "-",
                           style: TextStyle(
                             fontSize: width * 0.0075,
                             color: Colors.white, // Colore del testo
@@ -216,7 +221,7 @@ class _VesselTrim extends State<VesselTrim> {
                           ),
                         ),
                         Text(
-                          "-",
+                          widget.vesselImmersion?["mFwdSx"] ?? "-",
                           style: TextStyle(
                             fontSize: width * 0.0075,
                             color: Colors.white, // Colore del testo
@@ -233,21 +238,21 @@ class _VesselTrim extends State<VesselTrim> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(
-                          "-",
+                          widget.vesselImmersion?["mAftC"] ?? "-",
                           style: TextStyle(
                             fontSize: width * 0.0075,
                             color: Colors.white, // Colore del testo
                           ),
                         ),
                         Text(
-                          "-",
+                          widget.vesselImmersion?["mCenterC"] ?? "-",
                           style: TextStyle(
                             fontSize: width * 0.0075,
                             color: Colors.white, // Colore del testo
                           ),
                         ),
                         Text(
-                          "-",
+                          widget.vesselImmersion?["mFwdC"] ?? "-",
                           style: TextStyle(
                             fontSize: width * 0.0075,
                             color: Colors.white, // Colore del testo
@@ -273,7 +278,7 @@ class _VesselTrim extends State<VesselTrim> {
                           ),
                         ),
                         Text(
-                          "-",
+                          widget.vesselImmersion?["mAftDx"] ?? "-",
                           style: TextStyle(
                             fontSize: width * 0.0075,
                             color: Colors.white, // Colore del testo
@@ -291,7 +296,7 @@ class _VesselTrim extends State<VesselTrim> {
                           ),
                         ),
                         Text(
-                          "-",
+                          widget.vesselImmersion?["mFwdDx"] ?? "-",
                           style: TextStyle(
                             fontSize: width * 0.0075,
                             color: Colors.white, // Colore del testo

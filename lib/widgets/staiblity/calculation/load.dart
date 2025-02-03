@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/models/tank.dart';
 import 'package:plimsy/widgets/staiblity/liquids/liquid_painter.dart';
 
 class Load extends StatefulWidget {
-  const Load({super.key});
+  Load(
+      {super.key,
+      required this.data,
+      required this.getMaxLoad,
+      required this.allTanks});
+
+  Map<String, dynamic> data;
+  Function getMaxLoad;
+  Map<String, List<Tank>> allTanks;
   @override
   State<Load> createState() {
     return _Load();
@@ -12,12 +21,19 @@ class Load extends StatefulWidget {
 class _Load extends State<Load> with TickerProviderStateMixin {
   late AnimationController _controller;
 
-  final double maxLoad = 0;
-  final double weigthLoaded = 0;
+  String vesselLoad = "0";
+  String toReachMaxLoad = "0";
 
   @override
   void initState() {
     super.initState();
+
+    calcolaPesoTotaleVessel(
+      lightshipInfo: widget.data["lightshipInfo"],
+      vesselTanks: widget.allTanks,
+      maxVesselLoading: widget.data["maxVesselLoading"],
+      fixedWeigthTableData: widget.data["fixedWeigthTableData"]["tableData"],
+    );
 
     _controller = AnimationController(
       vsync: this,
@@ -29,6 +45,52 @@ class _Load extends State<Load> with TickerProviderStateMixin {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void calcolaPesoTotaleVessel({
+    required Map<String, dynamic> lightshipInfo,
+    required Map<String, dynamic> vesselTanks,
+    required List<dynamic> fixedWeigthTableData,
+    required double maxVesselLoading,
+  }) {
+    // 1. Peso del lightship
+    double lightshipWeight = lightshipInfo['weight'] ?? 0;
+
+    // 2. Peso dei liquidi nei tank
+    double pesoTotaleLiquidi = 0;
+    vesselTanks.forEach((_, tanks) {
+      for (var tank in tanks) {
+        double liters = (tank.liters ?? 0).toDouble();
+        double weightSpec = (tank.weightSpec ?? 0).toDouble();
+        pesoTotaleLiquidi += (liters / 1000) * weightSpec;
+      }
+    });
+
+    // 3. Peso fisso aggiuntivo
+    double pesoTotaleFix = 0;
+    for (var item in fixedWeigthTableData) {
+      double weight = double.tryParse(item['weight'] ?? '0') ?? 0;
+      pesoTotaleFix += weight;
+    }
+    double weigthLoaded = lightshipWeight + pesoTotaleLiquidi + pesoTotaleFix;
+    double fixedAndLiquids = pesoTotaleFix + pesoTotaleLiquidi;
+
+    widget.getMaxLoad(weigthLoaded);
+
+    // 4. Calcolo peso totale
+    setState(() {
+      toReachMaxLoad = (maxVesselLoading - weigthLoaded).toStringAsFixed(3);
+
+      double capacitaNetta = (maxVesselLoading - lightshipWeight);
+      vesselLoad = ((fixedAndLiquids / capacitaNetta) * 100).toStringAsFixed(2);
+    });
+
+    // 5. Calcolo percentuale di riempimento
+
+    // Risultati
+    print(
+        "Peso totale dell'imbarcazione: ${weigthLoaded.toStringAsFixed(2)} t");
+    print("Percentuale di riempimento: $vesselLoad%");
   }
 
   @override
@@ -66,7 +128,7 @@ class _Load extends State<Load> with TickerProviderStateMixin {
                 ),
               ),
               Text(
-                "$maxLoad t",
+                "$toReachMaxLoad t",
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -80,7 +142,7 @@ class _Load extends State<Load> with TickerProviderStateMixin {
                 ),
               ),
               Text(
-                "$weigthLoaded%",
+                "$vesselLoad%",
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

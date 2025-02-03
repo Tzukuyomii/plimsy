@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/dto/host.dart';
 import 'package:plimsy/dto/user.dart';
-import 'package:plimsy/models/content.dart';
-import 'package:plimsy/services/host.dart';
 import 'package:plimsy/util/secure_auth_storage.dart';
 import 'package:plimsy/widgets/3d_model/model3d_viewer.dart';
 import 'package:plimsy/widgets/menus/container_menu.dart';
 import 'package:plimsy/widgets/general_info/general_info_container.dart';
-import 'dart:convert';
 
 class Home extends StatefulWidget {
-  Home({super.key, required this.user, required this.host});
+  Home({super.key, required this.user, required this.host, required this.data});
 
   UserDTO user;
   HostDTO host;
+  Map<String, dynamic> data;
 
   @override
   State<Home> createState() {
@@ -24,45 +22,13 @@ class Home extends StatefulWidget {
 class _Home extends State<Home> with TickerProviderStateMixin {
   bool isOpen = false;
   bool showContent = false;
-  HostService hostService = HostService();
-  SecureAuthStorage storage = SecureAuthStorage();
-  Map<String, dynamic>? data;
-  bool isLoading = true;
 
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
 
-  void _initializeContent() async {
-    setState(() {
-      isLoading = true;
-    });
-    // Recupera gli assets salvati.
-    final assets = await SecureAuthStorage.getAssets();
-
-    // Prepara il contenuto basandoti sugli assets.
-    final body =
-        assets != null ? Map<String, String>.from(json.decode(assets)) : {};
-
-    // Valorizza l'oggetto content.
-    Content content = Content(
-      request: "connection",
-      body: body,
-    );
-
-    // Avvia il servizio host.
-
-    data = await hostService.host(widget.host.apiKey, content);
-
-    setState(() {
-      isLoading = false;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-
-    _initializeContent();
 
     // AnimationController per gestire le animazioni.
     _controller = AnimationController(
@@ -145,60 +111,57 @@ class _Home extends State<Home> with TickerProviderStateMixin {
           child: SizedBox(
             height: height,
             width: width,
-            child: isLoading
-                ? const CircularProgressIndicator()
-                : Stack(
+            child: Stack(
+              children: [
+                const Center(
+                  child: Model3DViewer(),
+                ),
+                Positioned(
+                  left: 5,
+                  child: CircleAvatar(
+                    backgroundColor: const Color.fromRGBO(1, 86, 118, 0.8),
+                    radius: 30,
+                    child: IconButton(
+                      onPressed: () {
+                        SecureAuthStorage.clearStorage();
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(
+                        Icons.logout,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Center(
-                        child: Model3DViewer(),
+                      ContainerMenu(
+                        containerHeight: containerHeight(),
+                        containerWidth: containerWidth(),
+                        isOpen: isOpen,
+                        fadeAnimation: _fadeAnimation,
+                        showContent: showContent,
+                        onDialogOpenChange: changeSize,
+                        apiKey: widget.host.apiKey,
+                        data: widget.data,
                       ),
-                      Positioned(
-                        left: 5,
-                        child: CircleAvatar(
-                          backgroundColor:
-                              const Color.fromRGBO(1, 86, 118, 0.8),
-                          radius: 30,
-                          child: IconButton(
-                            onPressed: () {
-                              SecureAuthStorage.clearStorage();
-                              Navigator.of(context).pop();
-                            },
-                            icon: const Icon(
-                              Icons.logout,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ContainerMenu(
-                              containerHeight: containerHeight(),
-                              containerWidth: containerWidth(),
-                              isOpen: isOpen,
-                              fadeAnimation: _fadeAnimation,
-                              showContent: showContent,
-                              onDialogOpenChange: changeSize,
-                              apiKey: widget.host.apiKey,
-                              data: data!,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 5,
-                        right: 5,
-                        child: GeneralInfoContainer(
-                          onDialogOpenChange: changeSize,
-                          shipName: data!["generalInformation"]["SHIP NAME"],
-                          zone: data!["vesselZone"],
-                        ),
-                      )
                     ],
                   ),
+                ),
+                Positioned(
+                  bottom: 5,
+                  right: 5,
+                  child: GeneralInfoContainer(
+                    onDialogOpenChange: changeSize,
+                    shipName: widget.data["generalInformation"]["SHIP NAME"],
+                    zone: widget.data["vesselZone"],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

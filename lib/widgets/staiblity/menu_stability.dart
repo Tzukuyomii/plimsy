@@ -9,10 +9,12 @@ class MenuStability extends StatefulWidget {
       {super.key,
       required this.changeContent,
       required this.showContent,
-      required this.data});
+      required this.data,
+      required this.draft});
 
   String showContent;
   Function changeContent;
+  Function draft;
   Map<String, dynamic> data;
 
   @override
@@ -55,7 +57,7 @@ class _MenuStability extends State<MenuStability>
         showSecondMenu = "fixed";
         _controller.forward();
       } else if (value == "calculate") {
-        widget.changeContent("Draft");
+        widget.changeContent("Calculate");
         showSecondMenu = "calculate";
         _controller.forward();
       } else if (value == "liquids") {
@@ -278,7 +280,7 @@ class _MenuStability extends State<MenuStability>
                         ? SlideTransition(
                             position: _slideAnimation,
                             child: MenuCalculate(
-                              changeContent: widget.changeContent,
+                              draft: widget.draft,
                               showContent: widget.showContent,
                             ),
                           )

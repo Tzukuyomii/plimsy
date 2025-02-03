@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:plimsy/screens/login.dart';
 
 import 'package:flutter/foundation.dart';
+import 'package:plimsy/widgets/spinner/spinner_overlay.dart';
+import 'package:plimsy/widgets/spinner/spinner_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   if (kReleaseMode) {
@@ -13,9 +16,19 @@ void main() {
     print("L'app è in modalità Debug");
   }
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]).then((_) =>   runApp(const App()));
-
-
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]).then(
+    (_) => runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (_) => SpinnerProvider(),
+          ),
+        ],
+        child: const App(),
+      ),
+    ),
+  );
 }
 
 class App extends StatelessWidget {
@@ -66,13 +79,18 @@ class _MyAppLifecycleObserverState extends State<MyAppLifecycleObserver>
     } else if (state == AppLifecycleState.detached) {
       // L'app è stata chiusa o uccisa
       print("App è stata chiusa");
-      const LoginScreen();
+      LoginScreen();
       // Esegui operazioni di cleanup o di salvataggio, se necessario
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return const LoginScreen(); // Il tuo widget principale
+    return Stack(
+      children: [
+        LoginScreen(), // La tua app principale
+        const SpinnerOverlay(), // Lo spinner globale
+      ],
+    );
   }
 }

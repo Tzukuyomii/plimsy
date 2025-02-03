@@ -2,7 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:plimsy/widgets/staiblity/calculation/graphic.dart';
 
 class Graphics extends StatefulWidget {
-  const Graphics({super.key});
+  Graphics(
+      {super.key,
+      required this.frames,
+      required this.momentDataSet,
+      required this.shearDataSet,
+      required this.maxBendingMoment,
+      required this.maxShearValue});
+
+  final List<dynamic> frames;
+  final List<dynamic> shearDataSet;
+  final List<dynamic> momentDataSet;
+  String maxBendingMoment;
+  String maxShearValue;
   @override
   State<Graphics> createState() {
     return _Graphics();
@@ -10,8 +22,6 @@ class Graphics extends StatefulWidget {
 }
 
 class _Graphics extends State<Graphics> {
-  final double _bendingMoment = 0;
-  final double _shearValue = 0;
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -51,7 +61,11 @@ class _Graphics extends State<Graphics> {
             ),
           ],
         ),
-        const Graphic(),
+        Graphic(
+          frames: widget.frames,
+          shearDataSet: widget.shearDataSet,
+          momentDataSet: widget.momentDataSet,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -142,7 +156,7 @@ class _Graphics extends State<Graphics> {
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            "MAXIMUM BENDING MOMENT VALUE: $_bendingMoment tm",
+            "MAXIMUM BENDING MOMENT VALUE: ${widget.maxBendingMoment} tm",
             style: TextStyle(
               color: Colors.white,
               fontSize: width * 0.0099,
@@ -153,7 +167,7 @@ class _Graphics extends State<Graphics> {
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            "MAXIMUM SHEAR VALUE: $_shearValue t",
+            "MAXIMUM SHEAR VALUE: ${widget.maxShearValue} t",
             style: TextStyle(
               color: Colors.white,
               fontSize: width * 0.0099,

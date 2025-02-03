@@ -16,8 +16,6 @@ class RadioButton extends StatefulWidget {
 }
 
 class _RadioButton extends State<RadioButton> {
-  String selectedOption = "2";
-
   BorderRadiusGeometry? borderRadiobutton(String value) {
     BorderRadiusGeometry? borderRadius;
     if (value == "first") {
@@ -42,17 +40,15 @@ class _RadioButton extends State<RadioButton> {
         mainAxisSize:
             MainAxisSize.min, // Riduce la larghezza della riga al contenuto
         children: [
-          _buildCustomRadioButton("1", "Port", "first"), // Primo radio button
-          _buildCustomRadioButton("2", "Auto", ""), // Secondo radio button
-          _buildCustomRadioButton(
-              "3", "Starboard", "third"), // Terzo radio button
+          _buildCustomRadioButton("Port", "first"), // Primo radio button
+          _buildCustomRadioButton("Auto", ""), // Secondo radio button
+          _buildCustomRadioButton("Starboard", "third"), // Terzo radio button
         ],
       ),
     );
   }
 
-  Widget _buildCustomRadioButton(
-      String value, String title, String indexRadio) {
+  Widget _buildCustomRadioButton(String value, String indexRadio) {
     bool isSelected =
         widget.selecteOption == value; // Controlla se è selezionato
     return GestureDetector(
@@ -78,7 +74,7 @@ class _RadioButton extends State<RadioButton> {
           mainAxisSize: MainAxisSize.min, // Riduce la larghezza al contenuto
           children: [
             Text(
-              title, // Testo associato al RadioButton
+              value, // Testo associato al RadioButton
               style: const TextStyle(
                 color: Colors.white, // Colore del testo
                 fontWeight: FontWeight.bold,

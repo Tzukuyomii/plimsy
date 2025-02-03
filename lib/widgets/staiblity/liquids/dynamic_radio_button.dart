@@ -16,6 +16,36 @@ class _DynamicRadioButtonsState extends State<DynamicRadioButtons> {
   String _selectedOption = ''; // Memorizza l'opzione selezionata
 
   @override
+  void initState() {
+    super.initState();
+    _initializeSelectedTank();
+  }
+
+  void _initializeSelectedTank() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Controlla prima i tank di POOL con liters > 0
+      for (var tank in widget.tanks["POOL"] ?? []) {
+        if (tank.liters > 0) {
+          _selectedOption = tank.id;
+          widget.onTankSelected(tank.id);
+          return;
+        }
+      }
+
+      // Se nessun POOL è disponibile, controlla i tank di FRESH W. con liters > 0
+      for (var tank in widget.tanks["FRESH W."] ?? []) {
+        if (tank.liters > 0) {
+          _selectedOption = tank.id;
+          widget.onTankSelected(tank.id);
+          return;
+        }
+      }
+
+      // Se nessun tank ha liters > 0, non facciamo nulla e _selectedOption resta vuoto
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -45,7 +75,6 @@ class _DynamicRadioButtonsState extends State<DynamicRadioButtons> {
                     _selectedOption = tank.id;
                   });
                   widget.onTankSelected(tank.id);
-                  print(" OPTION ${tank.id}");
                 },
                 child: Row(
                   children: [

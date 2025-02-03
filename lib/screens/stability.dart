@@ -1,14 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/models/content.dart';
+import 'package:plimsy/models/draftModel.dart';
 import 'package:plimsy/models/tank.dart';
+import 'package:plimsy/models/wind_calc_model.dart';
+import 'package:plimsy/services/draft.dart';
+import 'package:plimsy/services/wind_force.dart';
+import 'package:plimsy/widgets/spinner/spinner_overlay.dart';
+import 'package:plimsy/widgets/spinner/spinner_provider.dart';
 import 'package:plimsy/widgets/staiblity/calculation/draft.dart';
 import 'package:plimsy/widgets/staiblity/fixed/fixed.dart';
 import 'package:plimsy/widgets/staiblity/liquids/pools.dart';
 import 'package:plimsy/widgets/staiblity/menu_stability.dart';
 import 'package:plimsy/widgets/staiblity/liquids/tanks.dart';
+import 'package:provider/provider.dart';
 
 class Stability extends StatefulWidget {
-  Stability({super.key, required this.data});
+  Stability(
+      {super.key,
+      required this.data,
+      required this.apiKey,
+      required this.forceHeeling,
+      required this.seaWaterDensity});
 
+  String forceHeeling;
+  String seaWaterDensity;
+  String apiKey;
   Map<String, dynamic> data;
 
   @override
@@ -18,8 +34,15 @@ class Stability extends StatefulWidget {
 }
 
 class _Stability extends State<Stability> {
+  DraftService draftService = DraftService();
+  Map<String, dynamic> _draftData = {};
+  bool _isDraftLoading = false; // Stato di caricamento
+  bool firstDraft = false;
   final Map<String, ValueNotifier<double>> percentageNotifiers = {};
   String showContent = "Tanks";
+  double? totalDisplacement;
+
+  WindForce windForce = WindForce();
 
   late Map<String, List<Tank>> allTanks;
 
@@ -126,53 +149,127 @@ class _Stability extends State<Stability> {
     });
   }
 
+  void draft() async {
+    final spinner = context.read<SpinnerProvider>();
+    spinner.showSpinner();
+
+    try {
+      // Splitta `allTanks` in tanks e pools
+      final splittedPools = allTanks["POOLS"] ?? []; // Recupera i pools
+      final splittedTanks = {...allTanks}..remove("POOLS");
+      double water = double.parse(widget.seaWaterDensity);
+
+      DraftModel draftModel = DraftModel(
+          tanks: splittedTanks,
+          pools: splittedPools,
+          fixedWeightTableData: widget.data["fixedWeigthTableData"]
+              ["tableData"],
+          totalDisplacement: totalDisplacement!,
+          seaWaterDensity: water);
+
+      Content content = Content(request: "draft", body: draftModel);
+      final newData = await draftService.draft(widget.apiKey, content);
+
+      setState(() {
+        _draftData = newData; // Aggiorna i dati
+        firstDraft = true;
+      });
+      spinner.hideSpinner();
+    } catch (e) {
+      print("Errore durante il fetch dei dati: $e");
+      spinner.hideSpinner();
+    }
+  }
+
+  void windCalc(double force, double degrees) async {
+    final spinner = context.read<SpinnerProvider>();
+    spinner.showSpinner();
+
+    try {
+      WindCalcModel windModel = WindCalcModel(force: force, degrees: degrees);
+
+      Content content = Content(request: "wind-calc", body: windModel);
+      final newData = await windForce.windForce(widget.apiKey, content);
+
+      setState(() {
+        _draftData = newData; // Aggiorna i dati
+      });
+      spinner.hideSpinner();
+    } catch (e) {
+      print("Errore durante il fetch dei dati: $e");
+      spinner.hideSpinner();
+    }
+  }
+
+  double getMaxLoad(double load) {
+    return totalDisplacement = load;
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          height: height,
-          width: width,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color.fromARGB(134, 1, 200, 235),
-                Color.fromARGB(122, 9, 110, 150),
-                Color.fromARGB(177, 1, 42, 117)
-              ],
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              height: height,
+              width: width,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color.fromARGB(134, 1, 200, 235),
+                    Color.fromARGB(122, 9, 110, 150),
+                    Color.fromARGB(177, 1, 42, 117)
+                  ],
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  MenuStability(
+                    changeContent: changeContent,
+                    showContent: showContent,
+                    data: widget.data,
+                    draft: draft,
+                  ),
+                  if (showContent == "Tanks")
+                    Tanks(
+                      percentageNotifier: percentageNotifiers,
+                      updateTanks: updateTanks,
+                      selectColor: selectColor,
+                      tanks: allTanks,
+                    ),
+                  if (showContent == "Pools")
+                    Pools(
+                      percentageNotifier: percentageNotifiers,
+                      updateTanks: updateTanks,
+                      selectColor: selectColor,
+                      tanks: allTanks,
+                    ),
+                  if (showContent == "Fixed")
+                    Fixed(
+                      data: widget.data,
+                    ),
+                  if (showContent == "Calculate")
+                    Draft(
+                      isLoading: _isDraftLoading,
+                      draftData: _draftData,
+                      data: widget.data,
+                      getMaxLoad: getMaxLoad,
+                      allTanks: allTanks,
+                      firstDraft: firstDraft,
+                      windCalc: windCalc,
+                    ),
+                ],
+              ),
             ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              MenuStability(
-                changeContent: changeContent,
-                showContent: showContent,
-                data: widget.data,
-              ),
-              if (showContent == "Tanks")
-                Tanks(
-                  percentageNotifier: percentageNotifiers,
-                  updateTanks: updateTanks,
-                  selectColor: selectColor,
-                  tanks: allTanks,
-                ),
-              if (showContent == "Pools")
-                Pools(
-                  percentageNotifier: percentageNotifiers,
-                  updateTanks: updateTanks,
-                  selectColor: selectColor,
-                  tanks: allTanks,
-                ),
-              if (showContent == "Fixed") const Fixed(),
-              if (showContent == "Draft") const Draft(),
-            ],
-          ),
-        ),
+          const SpinnerOverlay()
+        ],
       ),
     );
   }

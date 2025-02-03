@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/widgets/login.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  LoginScreen({super.key});
 
+  @override
+  State<StatefulWidget> createState() {
+    return _LoginScreen();
+  }
+}
+
+class _LoginScreen extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -41,7 +48,7 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(
                   width: width * 0.05,
                 ),
-                const Expanded(
+                Expanded(
                   child: Login(),
                 )
               ],

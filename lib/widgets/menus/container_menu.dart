@@ -32,11 +32,23 @@ class ContainerMenu extends StatefulWidget {
 }
 
 class _ContainerMenu extends State<ContainerMenu> {
+  final TextEditingController _controller = TextEditingController();
+  String _selectedOption = "Auto";
+
+  void _onRadioButtonChanged(String value) {
+    setState(() {
+      _selectedOption = value;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.text = "1.025"; // Valore iniziale del TextField
+  }
+
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
-
     return AnimatedContainer(
       curve: Curves.easeInOut,
       duration: const Duration(milliseconds: 500),
@@ -54,9 +66,15 @@ class _ContainerMenu extends State<ContainerMenu> {
                 apiKey: widget.apiKey,
                 changeSize: widget.onDialogOpenChange,
                 data: widget.data,
+                controller: _controller,
+                onRadioButtonChanged: _onRadioButtonChanged,
+                selectedOption: _selectedOption,
               )
             : OverallMenu(
                 data: widget.data,
+                apiKey: widget.apiKey,
+                forceHeeling: _selectedOption,
+                seaWaterDensity: _controller.text,
               ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:plimsy/widgets/general_info/button_modal_contact_us.dart';
 import 'package:plimsy/widgets/general_info/grid_info.dart';
 import 'package:plimsy/widgets/general_info/pdf_viewer.dart';
@@ -9,8 +10,14 @@ class GeneralInfo extends StatefulWidget {
       {super.key,
       required this.changeSize,
       required this.apiKey,
-      required this.data});
+      required this.data,
+      required this.controller,
+      required this.onRadioButtonChanged,
+      required this.selectedOption});
 
+  String selectedOption;
+  Function onRadioButtonChanged;
+  TextEditingController controller;
   final Function changeSize;
   String apiKey;
   Map<String, dynamic> data;
@@ -22,32 +29,6 @@ class GeneralInfo extends StatefulWidget {
 }
 
 class _GeneralInfo extends State<GeneralInfo> {
-  final TextEditingController _controller = TextEditingController();
-
-  // Valore selezionato per il RadioButton
-  String _selectedOption = "2";
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.text = "1.025"; // Valore iniziale del TextField
-  }
-
-  void _onRadioButtonChanged(String value) {
-    setState(() {
-      _selectedOption = value;
-
-      // Aggiorna il valore del TextField in base al RadioButton selezionato
-      if (value == "2") {
-        _controller.text = "1.025";
-      } else if (value == "1") {
-        _controller.text = "1.100";
-      } else if (value == "3") {
-        _controller.text = "1.200";
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -129,8 +110,31 @@ class _GeneralInfo extends State<GeneralInfo> {
                               width: width * 0.15,
                               height: height * 0.05,
                               child: TextField(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(
+                                      r'^\d*\.?\d{0,3}$')), // Solo numeri con massimo 3 decimali
+                                ],
+                                onChanged: (value) {
+                                  double? numValue = double.tryParse(value);
+                                  if (numValue != null) {
+                                    if (numValue < 1.000) {
+                                      widget.controller.text = "1.000";
+                                    } else if (numValue > 1.200) {
+                                      widget.controller.text = "1.200";
+                                    }
+                                    widget.controller.selection =
+                                        TextSelection.fromPosition(
+                                      TextPosition(
+                                          offset:
+                                              widget.controller.text.length),
+                                    );
+                                  }
+                                },
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        decimal: true),
                                 textAlign: TextAlign.end,
-                                controller: _controller,
+                                controller: widget.controller,
                                 decoration: InputDecoration(
                                     filled: true,
                                     fillColor: Colors.white,
@@ -192,8 +196,8 @@ class _GeneralInfo extends State<GeneralInfo> {
                           ),
                         ),
                         RadioButton(
-                          onRadioButtonChange: _onRadioButtonChanged,
-                          selecteOption: _selectedOption,
+                          onRadioButtonChange: widget.onRadioButtonChanged,
+                          selecteOption: widget.selectedOption,
                         )
                       ],
                     ),

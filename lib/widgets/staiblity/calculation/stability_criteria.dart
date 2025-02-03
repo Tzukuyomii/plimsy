@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:plimsy/data/stability_criteria_data.dart';
 
 class StabilityCriteria extends StatefulWidget {
-  const StabilityCriteria({super.key});
+  const StabilityCriteria({super.key, required this.stabilityCriteriaObjs});
+
+  final Map<String, dynamic> stabilityCriteriaObjs;
   @override
   State<StabilityCriteria> createState() {
     return _StabilityCriteria();
@@ -10,10 +12,40 @@ class StabilityCriteria extends StatefulWidget {
 }
 
 class _StabilityCriteria extends State<StabilityCriteria> {
+  List<Map<String, dynamic>> _convertToList(Map<String, dynamic>? data) {
+    if (data == null) return [];
+    return data.values.map((entry) {
+      return {
+        "code": entry["code"] ?? "-",
+        "criterion": entry["criterion"] ?? "-",
+        "limit": entry["limit"] ?? "-",
+        "unit": entry["unit"] ?? "-",
+        "value": entry["value"] ?? "-",
+        "result": entry["result"] ?? "-",
+        "margin": entry["margin"] ?? "-",
+      };
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+
+    final List<Map<String, dynamic>> criteriaList = [
+      {
+        "code": "Code",
+        "criterion": "Criterion",
+        "limit": "Limit",
+        "unit": "Unit",
+        "value": "Value",
+        "result": "Result",
+        "margin": "Margin"
+      }, // Header
+      ..._convertToList(widget.stabilityCriteriaObjs["intact"]),
+      ..._convertToList(widget.stabilityCriteriaObjs["damage"]),
+    ];
+
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Table(
@@ -28,7 +60,7 @@ class _StabilityCriteria extends State<StabilityCriteria> {
         },
         border:
             TableBorder.all(color: Colors.transparent), // Linee di separazione
-        children: stabilityCriteriaItems.asMap().entries.map((entry) {
+        children: criteriaList.asMap().entries.map((entry) {
           final index = entry.key;
           final row = entry.value;
 

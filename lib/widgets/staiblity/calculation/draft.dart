@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:plimsy/models/tank.dart';
+import 'package:plimsy/services/wind_force.dart';
 import 'package:plimsy/widgets/3d_model/model3d_viewer.dart';
+import 'package:plimsy/widgets/spinner/custom_spinner.dart';
 import 'package:plimsy/widgets/staiblity/calculation/graphics.dart';
 import 'package:plimsy/widgets/staiblity/calculation/hydrostatic.dart';
 import 'package:plimsy/widgets/staiblity/calculation/load.dart';
@@ -9,7 +12,22 @@ import 'package:plimsy/widgets/staiblity/calculation/vessel_trim.dart';
 import 'package:plimsy/widgets/staiblity/calculation/wind.dart';
 
 class Draft extends StatefulWidget {
-  const Draft({super.key});
+  Draft(
+      {super.key,
+      required this.isLoading,
+      required this.draftData,
+      required this.data,
+      required this.getMaxLoad,
+      required this.allTanks,
+      required this.firstDraft,
+      required this.windCalc});
+  Function windCalc;
+  bool firstDraft;
+  final bool isLoading; // Stato di caricamento passato dal genitore
+  final Map<String, dynamic> draftData; // Dati passati dal genitore
+  final Map<String, dynamic> data;
+  Function getMaxLoad;
+  Map<String, List<Tank>> allTanks;
 
   @override
   State<Draft> createState() {
@@ -27,6 +45,8 @@ class _Draft extends State<Draft> with TickerProviderStateMixin {
   Offset windowPosition6 = const Offset(0, 0);
   Offset windowPosition7 = const Offset(0, 0);
 
+  WindForce windForce = WindForce();
+
   // Stato per gestire se una finestra è espansa o chiusa
   Map<String, bool> isExpandedMap = {
     "Wind force settings": true,
@@ -39,21 +59,62 @@ class _Draft extends State<Draft> with TickerProviderStateMixin {
   };
 
   Widget selectContent(String title) {
+    final draftDataAvailable = widget.draftData.isNotEmpty;
     switch (title) {
       case "Wind force settings":
-        return const Wind();
+        return Wind(
+          firstDraft: widget.firstDraft,
+          windCalc: widget.windCalc,
+        );
       case "Load Capacity":
-        return const Load();
+        return Load(
+          data: widget.data,
+          getMaxLoad: widget.getMaxLoad,
+          allTanks: widget.allTanks,
+        );
       case "Hydrostatic Information":
-        return const Hydrostatic();
+        return Hydrostatic(
+          hydroInfo: draftDataAvailable
+              ? widget.draftData["draftCalcResults"]["hydroAndImmersions"]
+              : null,
+        );
       case "Vessel Trim Information":
-        return const VesselTrim();
+        return VesselTrim(
+          heelValue: draftDataAvailable
+              ? widget.draftData["draftCalcResults"]["heel"]
+              : "0.00°",
+          trimValue: draftDataAvailable
+              ? widget.draftData["draftCalcResults"]["trim"]
+              : "0.00°",
+          vesselImmersion: draftDataAvailable
+              ? widget.draftData["draftCalcResults"]["hydroAndImmersions"]
+                  ["immersions"]["vesselImmersion"]
+              : null,
+        );
       case "Graphics-Longitudinal Strength":
-        return const Graphics();
+        return Graphics(
+          frames: draftDataAvailable
+              ? widget.draftData["longitudinalStrChart"]["frames"]
+              : [0.0],
+          momentDataSet: draftDataAvailable
+              ? widget.draftData["longitudinalStrChart"]["momentDataSet"]
+              : [0.0],
+          shearDataSet: draftDataAvailable
+              ? widget.draftData["longitudinalStrChart"]["shearDataSet"]
+              : [0.0],
+          maxBendingMoment: draftDataAvailable
+              ? widget.draftData["longitudinalStrChart"]["maxMoment"]
+              : "0.0",
+          maxShearValue: draftDataAvailable
+              ? widget.draftData["longitudinalStrChart"]["maxShear"]
+              : "0.0",
+        );
       case "Vessel Status":
         return const VesselStatus();
       case "Stability criteria compliance":
-        return const StabilityCriteria();
+        return StabilityCriteria(
+          stabilityCriteriaObjs: widget.data["stabilityCriteriaObjs"],
+        );
       default:
         return const Center(
           child: Text(
@@ -88,65 +149,67 @@ class _Draft extends State<Draft> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
-    return Expanded(
-      child: Stack(
-        children: [
-          const Center(
-            child: Model3DViewer(),
-          ),
-          // Creiamo le finestre espandibili
-          _buildDraggableAccordionWindow(
-            "Wind force settings",
-            windowPosition1,
-            (offset) => setState(() => windowPosition1 = offset),
-            screenSize!.width * 0.25,
-            screenSize!.height * 0.29,
-          ),
-          _buildDraggableAccordionWindow(
-            "Load Capacity",
-            windowPosition2,
-            (offset) => setState(() => windowPosition2 = offset),
-            screenSize!.width * 0.25,
-            screenSize!.height * 0.29,
-          ),
-          _buildDraggableAccordionWindow(
-            "Hydrostatic Information",
-            windowPosition3,
-            (offset) => setState(() => windowPosition3 = offset),
-            screenSize!.width * 0.4,
-            screenSize!.height * 0.27,
-          ),
-          _buildDraggableAccordionWindow(
-            "Vessel Trim Information",
-            windowPosition4,
-            (offset) => setState(() => windowPosition4 = offset),
-            screenSize!.width * 0.46,
-            screenSize!.height * 0.25,
-          ),
-          _buildDraggableAccordionWindow(
-            "Graphics-Longitudinal Strength",
-            windowPosition5,
-            (offset) => setState(() => windowPosition5 = offset),
-            screenSize!.width * 0.27,
-            screenSize!.height * 0.5,
-          ),
-          _buildDraggableAccordionWindow(
-            "Vessel Status",
-            windowPosition6,
-            (offset) => setState(() => windowPosition6 = offset),
-            screenSize!.width * 0.17,
-            screenSize!.height * 0.27,
-          ),
-          _buildDraggableAccordionWindow(
-            "Stability criteria compliance",
-            windowPosition7,
-            (offset) => setState(() => windowPosition7 = offset),
-            screenSize!.width * 0.41,
-            screenSize!.height * 0.27,
-          ),
-        ],
-      ),
-    );
+    return widget.isLoading
+        ? const CustomSpinner()
+        : Expanded(
+            child: Stack(
+              children: [
+                const Center(
+                  child: Model3DViewer(),
+                ),
+                // Creiamo le finestre espandibili
+                _buildDraggableAccordionWindow(
+                  "Wind force settings",
+                  windowPosition1,
+                  (offset) => setState(() => windowPosition1 = offset),
+                  screenSize!.width * 0.25,
+                  screenSize!.height * 0.29,
+                ),
+                _buildDraggableAccordionWindow(
+                  "Load Capacity",
+                  windowPosition2,
+                  (offset) => setState(() => windowPosition2 = offset),
+                  screenSize!.width * 0.25,
+                  screenSize!.height * 0.29,
+                ),
+                _buildDraggableAccordionWindow(
+                  "Hydrostatic Information",
+                  windowPosition3,
+                  (offset) => setState(() => windowPosition3 = offset),
+                  screenSize!.width * 0.4,
+                  screenSize!.height * 0.27,
+                ),
+                _buildDraggableAccordionWindow(
+                  "Vessel Trim Information",
+                  windowPosition4,
+                  (offset) => setState(() => windowPosition4 = offset),
+                  screenSize!.width * 0.46,
+                  screenSize!.height * 0.25,
+                ),
+                _buildDraggableAccordionWindow(
+                  "Graphics-Longitudinal Strength",
+                  windowPosition5,
+                  (offset) => setState(() => windowPosition5 = offset),
+                  screenSize!.width * 0.27,
+                  screenSize!.height * 0.5,
+                ),
+                _buildDraggableAccordionWindow(
+                  "Vessel Status",
+                  windowPosition6,
+                  (offset) => setState(() => windowPosition6 = offset),
+                  screenSize!.width * 0.17,
+                  screenSize!.height * 0.27,
+                ),
+                _buildDraggableAccordionWindow(
+                  "Stability criteria compliance",
+                  windowPosition7,
+                  (offset) => setState(() => windowPosition7 = offset),
+                  screenSize!.width * 0.41,
+                  screenSize!.height * 0.27,
+                ),
+              ],
+            ),
+          );
   }
 
   Widget _buildDraggableAccordionWindow(
@@ -212,14 +275,13 @@ class _Draft extends State<Draft> with TickerProviderStateMixin {
               if (isExpandedMap[title]!)
                 Expanded(
                   child: Container(
-                    decoration: const BoxDecoration(
-                      color: Color.fromRGBO(1, 57, 75, 0.5),
-                      borderRadius:
-                          BorderRadius.vertical(bottom: Radius.circular(8)),
-                    ),
-                    width: double.infinity,
-                    child: selectContent(title),
-                  ),
+                      decoration: const BoxDecoration(
+                        color: Color.fromRGBO(1, 57, 75, 0.5),
+                        borderRadius:
+                            BorderRadius.vertical(bottom: Radius.circular(8)),
+                      ),
+                      width: double.infinity,
+                      child: selectContent(title)),
                 ),
             ],
           ),

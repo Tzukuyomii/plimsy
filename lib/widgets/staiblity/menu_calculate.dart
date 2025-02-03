@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:plimsy/widgets/staiblity/trapezoid_painter.dart';
 
 class MenuCalculate extends StatefulWidget {
-  MenuCalculate(
-      {super.key, required this.changeContent, required this.showContent});
+  MenuCalculate({super.key, required this.showContent, required this.draft});
 
   String showContent;
-  Function changeContent;
+  Function draft;
 
   @override
   State<MenuCalculate> createState() {
@@ -56,7 +55,7 @@ class _MenuCalculate extends State<MenuCalculate>
           ),
           CustomPaint(
             painter: TrapezoidBorderPainter(
-              widget.showContent == "Draft"
+              widget.showContent == "Calculate"
                   ? Colors.yellow
                   : Colors.transparent,
             ),
@@ -74,7 +73,7 @@ class _MenuCalculate extends State<MenuCalculate>
                     .reverse(); // Se l'utente annulla il tap, ripristina l'animazione
               },
               onTap: () {
-                widget.changeContent("Draft");
+                widget.draft();
               },
               highlightColor: Colors.transparent,
               splashColor: Colors.transparent,

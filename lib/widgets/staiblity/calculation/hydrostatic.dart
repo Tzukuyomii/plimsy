@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:plimsy/data/hydrostatic_data.dart';
 
 class Hydrostatic extends StatefulWidget {
-  const Hydrostatic({super.key});
+  Hydrostatic({super.key, this.hydroInfo});
+
+  Map<String, dynamic>? hydroInfo;
   @override
   State<Hydrostatic> createState() {
     return _Hydrostatic();
@@ -14,6 +16,8 @@ class _Hydrostatic extends State<Hydrostatic> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+
+    print("HYDRO TEST ${widget.hydroInfo}");
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Table(
@@ -32,7 +36,25 @@ class _Hydrostatic extends State<Hydrostatic> {
                   width), // Imposta altezza personalizzata
               _buildCell(row["acronimo"], height * 0.03, width),
               _buildCell(row["unita"], height * 0.03, width),
-              _buildCell(row["valore"].toString(), height * 0.03, width),
+              _buildCell(
+                widget.hydroInfo != null
+                    ? (row["nome"].toString().toLowerCase() == "displacement"
+                        ? widget.hydroInfo!["displacement"].toString()
+                        : widget.hydroInfo!.keys.any((key) =>
+                                key.toLowerCase() ==
+                                row["acronimo"].toString().toLowerCase())
+                            ? widget.hydroInfo![widget.hydroInfo!.keys
+                                    .firstWhere((key) =>
+                                        key.toLowerCase() ==
+                                        row["acronimo"]
+                                            .toString()
+                                            .toLowerCase())]
+                                .toString()
+                            : row["valore"].toString())
+                    : row["valore"].toString(),
+                height * 0.03,
+                width,
+              ),
             ],
           );
         }).toList(),

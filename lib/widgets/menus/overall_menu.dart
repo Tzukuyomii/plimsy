@@ -4,9 +4,17 @@ import 'package:plimsy/screens/signal.dart';
 import 'package:plimsy/screens/stability.dart';
 
 class OverallMenu extends StatefulWidget {
-  OverallMenu({super.key, required this.data});
+  OverallMenu(
+      {super.key,
+      required this.data,
+      required this.apiKey,
+      required this.forceHeeling,
+      required this.seaWaterDensity});
 
+  String apiKey;
   Map<String, dynamic> data;
+  String forceHeeling;
+  String seaWaterDensity;
 
   @override
   State<OverallMenu> createState() {
@@ -26,6 +34,9 @@ class _OverallMenu extends State<OverallMenu> {
             MaterialPageRoute(
               builder: (ctx) => Stability(
                 data: widget.data,
+                apiKey: widget.apiKey,
+                forceHeeling: widget.forceHeeling,
+                seaWaterDensity: widget.seaWaterDensity,
               ),
             ),
           );

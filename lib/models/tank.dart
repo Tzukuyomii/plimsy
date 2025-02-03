@@ -20,6 +20,17 @@ class Tank {
         _permeability = permeability,
         _weightSpec = weightSpec;
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': _id,
+      'maxCapacity': _maxCapacity,
+      'liters': _liters,
+      'prefix': _prefix,
+      'permeability': _permeability,
+      'weightSpec': _weightSpec,
+    };
+  }
+
   // Getter e setter per `id`
   String get id => _id;
   set id(String value) {

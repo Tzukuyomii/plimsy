@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
+
+import 'package:flutter/services.dart';
 
 class Wind extends StatefulWidget {
-  const Wind({super.key});
+  Wind({super.key, required this.firstDraft, required this.windCalc});
+  bool firstDraft;
+  Function windCalc;
   @override
   State<Wind> createState() {
     return _Wind();
@@ -16,6 +21,31 @@ class _Wind extends State<Wind> {
   void dispose() {
     _controller.dispose(); // Non dimenticare di liberare il controller
     super.dispose();
+  }
+
+  double _getFormattedAngle() {
+    double angleInDegrees = (_rotationAngle * 180 / pi).round() % 360;
+
+    // Portiamo l'angolo nel range [0, 360]
+    if (angleInDegrees < 0) {
+      angleInDegrees += 360;
+    }
+
+    // Ruotiamo il riferimento di -90° per allinearlo correttamente
+    double correctedAngle = (angleInDegrees - 360) % 360;
+
+    // Convertiamo nel range [-90, 90]
+    if (correctedAngle > 180) {
+      correctedAngle -= 360;
+    }
+
+    if (correctedAngle > 90) {
+      correctedAngle = 180 - correctedAngle;
+    } else if (correctedAngle < -90) {
+      correctedAngle = -180 - correctedAngle;
+    }
+
+    return correctedAngle;
   }
 
   @override
@@ -63,7 +93,7 @@ class _Wind extends State<Wind> {
         Row(
           children: [
             Text(
-              "Wind Incidence: ${_rotationAngle.toStringAsFixed(2)}°",
+              "Wind Incidence: ${_getFormattedAngle()}°",
               style: TextStyle(color: Colors.white, fontSize: width * 0.0085),
             ),
           ],
@@ -86,7 +116,27 @@ class _Wind extends State<Wind> {
                   width: width * 0.035,
                   height: height * 0.025,
                   child: TextField(
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType
+                        .number, // Imposta il tipo di tastiera a numerico
+                    inputFormatters: [
+                      FilteringTextInputFormatter
+                          .digitsOnly, // Permetti solo cifre
+                      LengthLimitingTextInputFormatter(
+                          2), // Limita a 2 caratteri (per il numero 50 max)
+                    ],
+                    onChanged: (value) {
+                      // Aggiungi un controllo per non superare il limite di 50
+                      if (value.isNotEmpty) {
+                        final input = int.tryParse(value);
+                        if (input != null && input > 50) {
+                          _controller.text =
+                              '50'; // Imposta il valore massimo se l'utente scrive più di 50
+                          _controller.selection = TextSelection.collapsed(
+                              offset: _controller.text
+                                  .length); // Posiziona il cursore alla fine
+                        }
+                      }
+                    },
                     textAlign: TextAlign.end,
                     cursorColor: Colors.white,
                     style:
@@ -120,7 +170,12 @@ class _Wind extends State<Wind> {
               ],
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: !widget.firstDraft
+                  ? null
+                  : () {
+                      double force = double.parse(_controller.text);
+                      widget.windCalc(force, _getFormattedAngle());
+                    },
               style: TextButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
