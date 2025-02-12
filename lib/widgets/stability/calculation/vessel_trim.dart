@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class VesselTrim extends StatefulWidget {
   VesselTrim({super.key, this.vesselImmersion, this.trimValue, this.heelValue});
@@ -16,8 +17,25 @@ class VesselTrim extends StatefulWidget {
 }
 
 class _VesselTrim extends State<VesselTrim> {
-  final String trimImagePath =
-      "/data/user/0/com.example.plimsy/app_flutter/services_folder/trim-icon.webp";
+  String trimImagePath = "";
+
+  // Funzione per ottenere il percorso corretto del file
+  Future<void> _getIconPath() async {
+    final directory = await getApplicationDocumentsDirectory();
+    String path = "${directory.path}/services_folder/trim-icon.webp";
+
+    // Controlla se il file esiste, altrimenti carica il modello 3D
+    setState(() {
+      trimImagePath = path; // Aggiorna il percorso per caricare il modello
+    });
+  }
+
+  @override
+  void initState() {
+    _getIconPath();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     double trimValue = double.parse(widget.trimValue!.replaceAll("°", ""));
@@ -33,10 +51,12 @@ class _VesselTrim extends State<VesselTrim> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.file(
-                  File(trimImagePath),
-                  width: width * 0.2,
-                ),
+                trimImagePath.isEmpty
+                    ? CircularProgressIndicator()
+                    : Image.file(
+                        File(trimImagePath),
+                        width: width * 0.2,
+                      ),
                 Container(
                   width: double.infinity,
                   height: height * 0.03, // Altezza del container con gradiente
