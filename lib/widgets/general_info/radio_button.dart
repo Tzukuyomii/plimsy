@@ -40,15 +40,18 @@ class _RadioButton extends State<RadioButton> {
         mainAxisSize:
             MainAxisSize.min, // Riduce la larghezza della riga al contenuto
         children: [
-          _buildCustomRadioButton("Port", "first"), // Primo radio button
-          _buildCustomRadioButton("Auto", ""), // Secondo radio button
-          _buildCustomRadioButton("Starboard", "third"), // Terzo radio button
+          _buildCustomRadioButton(
+              "left", "Port", "first"), // Primo radio button
+          _buildCustomRadioButton("Auto", "Auto", ""), // Secondo radio button
+          _buildCustomRadioButton(
+              "right", "Starboard", "third"), // Terzo radio button
         ],
       ),
     );
   }
 
-  Widget _buildCustomRadioButton(String value, String indexRadio) {
+  Widget _buildCustomRadioButton(
+      String value, String title, String indexRadio) {
     bool isSelected =
         widget.selecteOption == value; // Controlla se è selezionato
     return GestureDetector(
@@ -74,7 +77,7 @@ class _RadioButton extends State<RadioButton> {
           mainAxisSize: MainAxisSize.min, // Riduce la larghezza al contenuto
           children: [
             Text(
-              value, // Testo associato al RadioButton
+              title, // Testo associato al RadioButton
               style: const TextStyle(
                 color: Colors.white, // Colore del testo
                 fontWeight: FontWeight.bold,

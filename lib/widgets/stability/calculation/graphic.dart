@@ -16,12 +16,12 @@ class Graphic extends StatelessWidget {
   double minX = 0;
   double maxX = 50;
   double minY = 0;
-  double maxY = 300;
+  double maxY = 50;
 
   @override
   Widget build(BuildContext context) {
     // Convertiamo le liste di mappe in liste di FlSpot
-    List<FlSpot> shearSpots = _generateSpotsFromMap(shearDataSet ?? []);
+    List<FlSpot> shearSpots = _generateSpotsFromMapshear(shearDataSet ?? []);
     List<FlSpot> momentSpots = _generateSpotsFromMap(momentDataSet ?? []);
 
     // Calcoliamo i valori reali per minX, maxX, minY e maxY
@@ -32,6 +32,9 @@ class Graphic extends StatelessWidget {
       maxY = _findMaxY(shearSpots, momentSpots);
     }
 
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
     return AspectRatio(
       aspectRatio: 2.0,
       child: LineChart(
@@ -41,28 +44,20 @@ class Graphic extends StatelessWidget {
               sideTitles:
                   SideTitles(showTitles: false), // Rimuovi la linea sopra
             ),
-            rightTitles: AxisTitles(
-              sideTitles: SideTitles(
-                interval: 50,
-                showTitles: true,
-                reservedSize: 30, // Spazio per i numeri
-                getTitlesWidget: (value, meta) {
-                  return Text(
-                    value.toStringAsFixed(1), // Mostra 1 decimale
-                    style: TextStyle(fontSize: 8), // Font più piccolo
-                  );
-                },
-              ),
-            ),
+            rightTitles:
+                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
-                interval: 50,
+                interval: 9,
                 showTitles: true,
-                reservedSize: 30, // Spazio per i numeri
+                reservedSize: 25, // Spazio per i numeri
                 getTitlesWidget: (value, meta) {
                   return Text(
                     value.toStringAsFixed(1), // Mostra 1 decimale
-                    style: TextStyle(fontSize: 8), // Font più piccolo
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: width * 0.007,
+                    ), // Font più piccolo
                   );
                 },
               ),
@@ -75,13 +70,30 @@ class Graphic extends StatelessWidget {
                 getTitlesWidget: (value, meta) {
                   return Text(
                     value.toStringAsFixed(0), // Mostra solo numeri interi
-                    style: TextStyle(fontSize: 8), // Font più piccolo
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: width * 0.007,
+                    ), // Font più piccolo
                   );
                 },
               ),
             ),
           ),
-          borderData: FlBorderData(show: true),
+          borderData: FlBorderData(
+            show: true, // Mostra il bordo
+            border: const Border(
+              top: BorderSide(
+                  color: Colors.transparent,
+                  width: 0), // Nasconde il bordo superiore
+              right: BorderSide(
+                  color: Colors.transparent,
+                  width: 0), // Nasconde il bordo destro
+              bottom: BorderSide(
+                  color: Colors.white, width: 1), // Bordo bianco in basso
+              left: BorderSide(
+                  color: Colors.white, width: 1), // Bordo bianco a sinistra
+            ),
+          ),
           minX: minX,
           maxX: maxX,
           minY: minY,
@@ -107,6 +119,26 @@ class Graphic extends StatelessWidget {
 
   /// Funzione che estrae i valori x e y dalle mappe e li converte in FlSpot
   List<FlSpot> _generateSpotsFromMap(List<dynamic> dataset) {
+    List<FlSpot> spots = [];
+
+    for (var item in dataset) {
+      if (item is Map<String, dynamic>) {
+        double? x = _toDouble(item["x"]);
+        double? y = _toDouble(item["y"] / 10);
+
+        if (x != null && y != null) {
+          spots.add(FlSpot(x, y));
+        }
+      }
+    }
+
+    // Ordiniamo i punti per X (assicurato che l'asse X sia crescente)
+    spots.sort((a, b) => a.x.compareTo(b.x));
+
+    return spots;
+  }
+
+  List<FlSpot> _generateSpotsFromMapshear(List<dynamic> dataset) {
     List<FlSpot> spots = [];
 
     for (var item in dataset) {

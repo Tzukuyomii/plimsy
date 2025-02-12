@@ -96,6 +96,7 @@ flutter:
     - assets/img/solid-weights/fixedweights.png
     - assets/img/calculations-main/loadline-status.png
     - assets/img/calculations-main/draft-icon.png
+    - assets/img/calculations-main/stability-icon.png
     - assets/img/info-panel/go-back-icon.png
     - assets/img/info-panel/help-icon.png
     - assets/img/info-panel/contact-us-icon.png

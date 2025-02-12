@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:plimsy/widgets/staiblity/fixed/table_fixed.dart';
+import 'package:plimsy/widgets/stability/fixed/table_fixed.dart';
 
 class FixedAccordion extends StatefulWidget {
-  FixedAccordion({super.key, required this.dropDownValue});
+  FixedAccordion({
+    super.key,
+    required this.dropDownValue,
+    required this.fixedWeigthTableData,
+  });
+
+  final List<dynamic> fixedWeigthTableData;
   String? dropDownValue;
   @override
   State<FixedAccordion> createState() => _FixedAccordion();
@@ -63,7 +69,9 @@ class _FixedAccordion extends State<FixedAccordion> {
                 borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
               ),
               width: double.infinity,
-              child: const TableFixed(),
+              child: TableFixed(
+                initialData: widget.fixedWeigthTableData,
+              ),
             ),
         ],
       ),

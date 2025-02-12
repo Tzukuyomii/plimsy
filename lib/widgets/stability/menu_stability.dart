@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/widgets/general_info/label.dart';
-import 'package:plimsy/widgets/staiblity/menu_calculate.dart';
-import 'package:plimsy/widgets/staiblity/menu_fixed.dart';
-import 'package:plimsy/widgets/staiblity/menu_liquids.dart';
+import 'package:plimsy/widgets/stability/menu_calculate.dart';
+import 'package:plimsy/widgets/stability/menu_fixed.dart';
+import 'package:plimsy/widgets/stability/menu_liquids.dart';
+import 'package:plimsy/widgets/stability/trapezoid_painter.dart';
 
 class MenuStability extends StatefulWidget {
   MenuStability(
@@ -10,11 +11,17 @@ class MenuStability extends StatefulWidget {
       required this.changeContent,
       required this.showContent,
       required this.data,
-      required this.draft});
+      required this.draft,
+      required this.firstDraft,
+      required this.intactService,
+      required this.draftUpdated});
 
+  bool draftUpdated;
+  bool firstDraft;
   String showContent;
   Function changeContent;
   Function draft;
+  Function intactService;
   Map<String, dynamic> data;
 
   @override
@@ -128,40 +135,48 @@ class _MenuStability extends State<MenuStability>
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  InkWell(
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    child: Column(
-                      children: [
-                        Stack(
-                          children: [
-                            Image.asset(
-                              "assets/img/nav-icon/liquid-weights.png",
-                              width: width * 0.045,
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Image.asset(
-                                "assets/img/main/attention.png",
-                                width: width * 0.02,
-                              ),
-                            )
-                          ],
-                        ),
-                        const Text(
-                          "Liquids",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                      ],
+                  CustomPaint(
+                    painter: TrapezoidBorderPainter(
+                      widget.showContent == "Tanks" ||
+                              widget.showContent == "Pools"
+                          ? Colors.yellow
+                          : Colors.transparent,
                     ),
-                    onTap: () {
-                      changeTabMenu("liquids");
-                    },
+                    child: InkWell(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      child: Column(
+                        children: [
+                          Stack(
+                            children: [
+                              Image.asset(
+                                "assets/img/nav-icon/liquid-weights.png",
+                                width: width * 0.045,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Image.asset(
+                                  "assets/img/main/attention.png",
+                                  width: width * 0.02,
+                                ),
+                              )
+                            ],
+                          ),
+                          Text(
+                            "Liquids",
+                            style: TextStyle(
+                                fontSize: width * 0.011,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        changeTabMenu("liquids");
+                      },
+                    ),
                   ),
                   AnimatedSize(
                     duration: const Duration(milliseconds: 500),
@@ -183,40 +198,47 @@ class _MenuStability extends State<MenuStability>
                       width: width * 0.025,
                     ),
                   ),
-                  InkWell(
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    child: Column(
-                      children: [
-                        Stack(
-                          children: [
-                            Image.asset(
-                              "assets/img/nav-icon/solid-weights.png",
-                              width: width * 0.04,
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Image.asset(
-                                "assets/img/main/attention.png",
-                                width: width * 0.02,
-                              ),
-                            )
-                          ],
-                        ),
-                        const Text(
-                          "Solid weights",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                      ],
+                  CustomPaint(
+                    painter: TrapezoidBorderPainter(
+                      widget.showContent == "Fixed"
+                          ? Colors.yellow
+                          : Colors.transparent,
                     ),
-                    onTap: () {
-                      changeTabMenu("fixed");
-                    },
+                    child: InkWell(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      child: Column(
+                        children: [
+                          Stack(
+                            children: [
+                              Image.asset(
+                                "assets/img/nav-icon/solid-weights.png",
+                                width: width * 0.045,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Image.asset(
+                                  "assets/img/main/attention.png",
+                                  width: width * 0.02,
+                                ),
+                              )
+                            ],
+                          ),
+                          Text(
+                            "Solid weights",
+                            style: TextStyle(
+                                fontSize: width * 0.011,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        changeTabMenu("fixed");
+                      },
+                    ),
                   ),
                   AnimatedSize(
                     duration: const Duration(milliseconds: 500),
@@ -238,40 +260,47 @@ class _MenuStability extends State<MenuStability>
                       width: width * 0.025,
                     ),
                   ),
-                  InkWell(
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    child: Column(
-                      children: [
-                        Stack(
-                          children: [
-                            Image.asset(
-                              "assets/img/nav-icon/calculation.png",
-                              width: width * 0.04,
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Image.asset(
-                                "assets/img/main/attention.png",
-                                width: width * 0.02,
-                              ),
-                            )
-                          ],
-                        ),
-                        const Text(
-                          "Calculation",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                      ],
+                  CustomPaint(
+                    painter: TrapezoidBorderPainter(
+                      widget.showContent == "Calculate"
+                          ? Colors.yellow
+                          : Colors.transparent,
                     ),
-                    onTap: () {
-                      changeTabMenu("calculate");
-                    },
+                    child: InkWell(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      child: Column(
+                        children: [
+                          Stack(
+                            children: [
+                              Image.asset(
+                                "assets/img/nav-icon/calculation.png",
+                                width: width * 0.045,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Image.asset(
+                                  "assets/img/main/attention.png",
+                                  width: width * 0.02,
+                                ),
+                              )
+                            ],
+                          ),
+                          Text(
+                            "Calculation",
+                            style: TextStyle(
+                                fontSize: width * 0.011,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        changeTabMenu("calculate");
+                      },
+                    ),
                   ),
                   AnimatedSize(
                     duration: const Duration(milliseconds: 500),
@@ -280,8 +309,11 @@ class _MenuStability extends State<MenuStability>
                         ? SlideTransition(
                             position: _slideAnimation,
                             child: MenuCalculate(
+                              draftUpdated: widget.draftUpdated,
+                              firstDraft: widget.firstDraft,
                               draft: widget.draft,
                               showContent: widget.showContent,
+                              intactService: widget.intactService,
                             ),
                           )
                         : Container(),

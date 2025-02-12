@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:plimsy/widgets/staiblity/fixed/fixed_accordion.dart';
+import 'package:plimsy/widgets/stability/fixed/fixed_accordion.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Fixed extends StatefulWidget {
@@ -264,7 +264,10 @@ class _Fixed extends State<Fixed> with TickerProviderStateMixin {
               children: [
                 Align(
                   alignment: Alignment.topCenter,
-                  child: FixedAccordion(dropDownValue: _dropdownValue),
+                  child: FixedAccordion(
+                      dropDownValue: _dropdownValue,
+                      fixedWeigthTableData: widget.data["fixedWeigthTableData"]
+                          ["tableData"]),
                 ), // Accordion
                 SizedBox(
                   width: width * 0.02,

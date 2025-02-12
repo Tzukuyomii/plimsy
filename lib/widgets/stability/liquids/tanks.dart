@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/data/liquids_data.dart';
 import 'package:plimsy/models/tank.dart';
-import 'package:plimsy/widgets/staiblity/liquids/liquid_painter.dart';
-import 'package:plimsy/widgets/staiblity/liquids/liquids_on_board_container.dart';
-import 'package:plimsy/widgets/staiblity/liquids/slider_tank.dart';
+import 'package:plimsy/widgets/stability/liquids/liquid_painter.dart';
+import 'package:plimsy/widgets/stability/liquids/liquids_on_board_container.dart';
+import 'package:plimsy/widgets/stability/liquids/slider_tank.dart';
 
 class Tanks extends StatefulWidget {
   Tanks({

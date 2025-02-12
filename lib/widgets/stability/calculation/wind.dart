@@ -169,25 +169,40 @@ class _Wind extends State<Wind> {
                 )
               ],
             ),
-            TextButton(
-              onPressed: !widget.firstDraft
-                  ? null
-                  : () {
-                      double force = double.parse(_controller.text);
-                      widget.windCalc(force, _getFormattedAngle());
-                    },
-              style: TextButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                minimumSize: Size(width * 0.01, height * 0.01),
-                side: const BorderSide(color: Colors.white, width: 1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+            Opacity(
+              opacity: !widget.firstDraft ? 0.5 : 1,
+              child: TextButton(
+                onPressed: !widget.firstDraft
+                    ? null
+                    : () {
+                        if (_controller.text.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  "Inserisci un valore valido per la forza del vento."),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        double force = double.parse(_controller.text);
+                        widget.windCalc(force, _getFormattedAngle());
+                      },
+                style: TextButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  minimumSize: Size(width * 0.01, height * 0.01),
+                  side: const BorderSide(color: Colors.white, width: 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
                 ),
-              ),
-              child: Text(
-                "Calc",
-                style: TextStyle(color: Colors.white, fontSize: width * 0.0085),
+                child: Text(
+                  "Calc",
+                  style:
+                      TextStyle(color: Colors.white, fontSize: width * 0.0085),
+                ),
               ),
             )
           ],

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:plimsy/widgets/staiblity/calculation/graphic.dart';
+import 'package:plimsy/widgets/stability/calculation/graphic.dart';
 
-class Graphics extends StatefulWidget {
-  Graphics(
+class LongStr extends StatefulWidget {
+  LongStr(
       {super.key,
       required this.frames,
       required this.momentDataSet,
@@ -16,55 +16,25 @@ class Graphics extends StatefulWidget {
   String maxBendingMoment;
   String maxShearValue;
   @override
-  State<Graphics> createState() {
-    return _Graphics();
+  State<StatefulWidget> createState() {
+    return _LongStr();
   }
 }
 
-class _Graphics extends State<Graphics> {
+class _LongStr extends State<LongStr> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(width * 0.13, height * 0.025),
-                backgroundColor: const Color(0xFF008B8B),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-              child: Text(
-                "Long. Strength",
-                style: TextStyle(color: Colors.white, fontSize: width * 0.009),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(width * 0.13, height * 0.025),
-                backgroundColor: const Color(0xFF008B8B),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-              child: Text(
-                "Righting Arm",
-                style: TextStyle(color: Colors.white, fontSize: width * 0.009),
-              ),
-            ),
-          ],
-        ),
-        Graphic(
-          frames: widget.frames,
-          shearDataSet: widget.shearDataSet,
-          momentDataSet: widget.momentDataSet,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: width * 0.01),
+          child: Graphic(
+            frames: widget.frames,
+            shearDataSet: widget.shearDataSet,
+            momentDataSet: widget.momentDataSet,
+          ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -100,7 +70,7 @@ class _Graphics extends State<Graphics> {
                   width: width * 0.003,
                 ),
                 Text(
-                  "BENDING MOMENT(t.m)",
+                  "BENDING MOMENT(t.m / 10)",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: width * 0.0099,

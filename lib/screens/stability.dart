@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/models/content.dart';
 import 'package:plimsy/models/draftModel.dart';
+import 'package:plimsy/models/intactModel.dart';
 import 'package:plimsy/models/tank.dart';
 import 'package:plimsy/models/wind_calc_model.dart';
 import 'package:plimsy/services/draft.dart';
+import 'package:plimsy/services/intact.dart';
 import 'package:plimsy/services/wind_force.dart';
 import 'package:plimsy/widgets/spinner/spinner_overlay.dart';
 import 'package:plimsy/widgets/spinner/spinner_provider.dart';
-import 'package:plimsy/widgets/staiblity/calculation/draft.dart';
-import 'package:plimsy/widgets/staiblity/fixed/fixed.dart';
-import 'package:plimsy/widgets/staiblity/liquids/pools.dart';
-import 'package:plimsy/widgets/staiblity/menu_stability.dart';
-import 'package:plimsy/widgets/staiblity/liquids/tanks.dart';
+import 'package:plimsy/widgets/stability/calculation/draft.dart';
+import 'package:plimsy/widgets/stability/fixed/fixed.dart';
+import 'package:plimsy/widgets/stability/liquids/pools.dart';
+import 'package:plimsy/widgets/stability/menu_stability.dart';
+import 'package:plimsy/widgets/stability/liquids/tanks.dart';
 import 'package:provider/provider.dart';
 
 class Stability extends StatefulWidget {
@@ -34,21 +36,26 @@ class Stability extends StatefulWidget {
 }
 
 class _Stability extends State<Stability> {
-  DraftService draftService = DraftService();
+  bool draftUpdated = false;
+  double toReachMaxLoad = 0.0;
   Map<String, dynamic> _draftData = {};
+  Map<String, dynamic> _intactData = {};
   bool _isDraftLoading = false; // Stato di caricamento
   bool firstDraft = false;
   final Map<String, ValueNotifier<double>> percentageNotifiers = {};
   String showContent = "Tanks";
   double? totalDisplacement;
 
+  DraftService draftService = DraftService();
   WindForce windForce = WindForce();
+  Intact intact = Intact();
 
   late Map<String, List<Tank>> allTanks;
 
   @override
   void initState() {
     super.initState();
+    print("FORCE HEELING ${widget.forceHeeling}");
 
     // Parsing dei tanks
     final rawTanks = widget.data["vesselTanks"]["tanks"];
@@ -173,6 +180,11 @@ class _Stability extends State<Stability> {
       setState(() {
         _draftData = newData; // Aggiorna i dati
         firstDraft = true;
+        if (toReachMaxLoad < 0) {
+          draftUpdated = false;
+        } else {
+          draftUpdated = true;
+        }
       });
       spinner.hideSpinner();
     } catch (e) {
@@ -205,6 +217,35 @@ class _Stability extends State<Stability> {
     return totalDisplacement = load;
   }
 
+  void updateToReachMaxLoad(double value) {
+    setState(() {
+      toReachMaxLoad = value;
+    });
+  }
+
+  void intactService() async {
+    final spinner = context.read<SpinnerProvider>();
+    spinner.showSpinner();
+
+    try {
+      Intactmodel intactmodel = Intactmodel(forcedHeeling: widget.forceHeeling);
+
+      Content content = Content(request: "stability", body: intactmodel);
+      final newData = await intact.stability(widget.apiKey, content);
+
+      setState(() {
+        _intactData = newData;
+      });
+
+      print("STABILITY RESPONSE $newData");
+
+      spinner.hideSpinner();
+    } catch (e) {
+      print("Errore durante il fetch dei dati: $e");
+      spinner.hideSpinner();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -231,10 +272,13 @@ class _Stability extends State<Stability> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   MenuStability(
+                    draftUpdated: draftUpdated,
                     changeContent: changeContent,
                     showContent: showContent,
                     data: widget.data,
                     draft: draft,
+                    firstDraft: firstDraft,
+                    intactService: intactService,
                   ),
                   if (showContent == "Tanks")
                     Tanks(
@@ -256,6 +300,9 @@ class _Stability extends State<Stability> {
                     ),
                   if (showContent == "Calculate")
                     Draft(
+                      draftUpdated: draftUpdated,
+                      toReachMaxLoad: toReachMaxLoad,
+                      updateToReachMaxLoad: updateToReachMaxLoad,
                       isLoading: _isDraftLoading,
                       draftData: _draftData,
                       data: widget.data,
@@ -263,6 +310,7 @@ class _Stability extends State<Stability> {
                       allTanks: allTanks,
                       firstDraft: firstDraft,
                       windCalc: windCalc,
+                      intactData: _intactData,
                     ),
                 ],
               ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/models/tank.dart';
 import 'package:flutter/services.dart';
-import 'package:plimsy/widgets/staiblity/liquids/liquid_painter.dart';
+import 'package:plimsy/widgets/stability/liquids/liquid_painter.dart';
 
 class SliderTank extends StatefulWidget {
   SliderTank(

@@ -3,13 +3,13 @@ import 'package:plimsy/models/tank.dart';
 import 'package:plimsy/services/wind_force.dart';
 import 'package:plimsy/widgets/3d_model/model3d_viewer.dart';
 import 'package:plimsy/widgets/spinner/custom_spinner.dart';
-import 'package:plimsy/widgets/staiblity/calculation/graphics.dart';
-import 'package:plimsy/widgets/staiblity/calculation/hydrostatic.dart';
-import 'package:plimsy/widgets/staiblity/calculation/load.dart';
-import 'package:plimsy/widgets/staiblity/calculation/stability_criteria.dart';
-import 'package:plimsy/widgets/staiblity/calculation/vessel_status.dart';
-import 'package:plimsy/widgets/staiblity/calculation/vessel_trim.dart';
-import 'package:plimsy/widgets/staiblity/calculation/wind.dart';
+import 'package:plimsy/widgets/stability/calculation/graphics.dart';
+import 'package:plimsy/widgets/stability/calculation/hydrostatic.dart';
+import 'package:plimsy/widgets/stability/calculation/load.dart';
+import 'package:plimsy/widgets/stability/calculation/stability_criteria.dart';
+import 'package:plimsy/widgets/stability/calculation/vessel_status.dart';
+import 'package:plimsy/widgets/stability/calculation/vessel_trim.dart';
+import 'package:plimsy/widgets/stability/calculation/wind.dart';
 
 class Draft extends StatefulWidget {
   Draft(
@@ -20,10 +20,19 @@ class Draft extends StatefulWidget {
       required this.getMaxLoad,
       required this.allTanks,
       required this.firstDraft,
-      required this.windCalc});
+      required this.windCalc,
+      required this.intactData,
+      required this.toReachMaxLoad,
+      required this.updateToReachMaxLoad,
+      required this.draftUpdated});
+
+  bool draftUpdated;
+  Function updateToReachMaxLoad;
+  double toReachMaxLoad;
   Function windCalc;
   bool firstDraft;
   final bool isLoading; // Stato di caricamento passato dal genitore
+  Map<String, dynamic> intactData;
   final Map<String, dynamic> draftData; // Dati passati dal genitore
   final Map<String, dynamic> data;
   Function getMaxLoad;
@@ -60,6 +69,7 @@ class _Draft extends State<Draft> with TickerProviderStateMixin {
 
   Widget selectContent(String title) {
     final draftDataAvailable = widget.draftData.isNotEmpty;
+    final intactDataAvailable = widget.intactData.isNotEmpty;
     switch (title) {
       case "Wind force settings":
         return Wind(
@@ -71,6 +81,7 @@ class _Draft extends State<Draft> with TickerProviderStateMixin {
           data: widget.data,
           getMaxLoad: widget.getMaxLoad,
           allTanks: widget.allTanks,
+          updateToReachMaxLoad: widget.updateToReachMaxLoad,
         );
       case "Hydrostatic Information":
         return Hydrostatic(
@@ -108,12 +119,23 @@ class _Draft extends State<Draft> with TickerProviderStateMixin {
           maxShearValue: draftDataAvailable
               ? widget.draftData["longitudinalStrChart"]["maxShear"]
               : "0.0",
+          intactData: intactDataAvailable ? widget.intactData : {},
         );
       case "Vessel Status":
-        return const VesselStatus();
+        return VesselStatus(
+          draftUpdated: widget.draftUpdated,
+          firstDraft: widget.firstDraft,
+          toReachMaxLoad: widget.toReachMaxLoad,
+          criteriaIntact:
+              intactDataAvailable ? widget.intactData["criteriaTable"] : null,
+          stabilityScore:
+              intactDataAvailable ? widget.intactData["stabilityScore"] : null,
+        );
       case "Stability criteria compliance":
         return StabilityCriteria(
           stabilityCriteriaObjs: widget.data["stabilityCriteriaObjs"],
+          criteriaIntact:
+              intactDataAvailable ? widget.intactData["criteriaTable"] : {},
         );
       default:
         return const Center(
@@ -128,6 +150,7 @@ class _Draft extends State<Draft> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         screenSize = MediaQuery.of(context).size;
@@ -275,13 +298,14 @@ class _Draft extends State<Draft> with TickerProviderStateMixin {
               if (isExpandedMap[title]!)
                 Expanded(
                   child: Container(
-                      decoration: const BoxDecoration(
-                        color: Color.fromRGBO(1, 57, 75, 0.5),
-                        borderRadius:
-                            BorderRadius.vertical(bottom: Radius.circular(8)),
-                      ),
-                      width: double.infinity,
-                      child: selectContent(title)),
+                    decoration: const BoxDecoration(
+                      color: Color.fromRGBO(1, 57, 75, 0.5),
+                      borderRadius:
+                          BorderRadius.vertical(bottom: Radius.circular(8)),
+                    ),
+                    width: double.infinity,
+                    child: selectContent(title),
+                  ),
                 ),
             ],
           ),

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:plimsy/data/note_pools.dart';
 import 'package:plimsy/models/tank.dart';
 import 'package:plimsy/widgets/3d_model/model3d_viewer.dart';
-import 'package:plimsy/widgets/staiblity/liquids/dynamic_radio_button.dart';
-import 'package:plimsy/widgets/staiblity/liquids/liquids_on_board_container.dart';
-import 'package:plimsy/widgets/staiblity/liquids/pool_text_handler.dart';
-import 'package:plimsy/widgets/staiblity/liquids/slider_tank.dart';
+import 'package:plimsy/widgets/stability/liquids/dynamic_radio_button.dart';
+import 'package:plimsy/widgets/stability/liquids/liquids_on_board_container.dart';
+import 'package:plimsy/widgets/stability/liquids/pool_text_handler.dart';
+import 'package:plimsy/widgets/stability/liquids/slider_tank.dart';
 
 class Pools extends StatefulWidget {
   Pools({

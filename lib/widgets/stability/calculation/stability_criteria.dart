@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:plimsy/data/stability_criteria_data.dart';
 
 class StabilityCriteria extends StatefulWidget {
-  const StabilityCriteria({super.key, required this.stabilityCriteriaObjs});
+  const StabilityCriteria(
+      {super.key,
+      required this.stabilityCriteriaObjs,
+      required this.criteriaIntact});
 
   final Map<String, dynamic> stabilityCriteriaObjs;
+  final Map<String, dynamic> criteriaIntact;
   @override
   State<StabilityCriteria> createState() {
     return _StabilityCriteria();
@@ -42,8 +46,9 @@ class _StabilityCriteria extends State<StabilityCriteria> {
         "result": "Result",
         "margin": "Margin"
       }, // Header
-      ..._convertToList(widget.stabilityCriteriaObjs["intact"]),
-      ..._convertToList(widget.stabilityCriteriaObjs["damage"]),
+      ..._convertToList(widget.criteriaIntact.isNotEmpty
+          ? widget.criteriaIntact
+          : widget.stabilityCriteriaObjs["intact"]),
     ];
 
     return SingleChildScrollView(

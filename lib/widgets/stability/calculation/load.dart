@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:plimsy/models/tank.dart';
-import 'package:plimsy/widgets/staiblity/liquids/liquid_painter.dart';
+import 'package:plimsy/widgets/stability/liquids/liquid_painter.dart';
 
 class Load extends StatefulWidget {
   Load(
       {super.key,
       required this.data,
       required this.getMaxLoad,
-      required this.allTanks});
+      required this.allTanks,
+      required this.updateToReachMaxLoad});
 
+  Function updateToReachMaxLoad;
   Map<String, dynamic> data;
   Function getMaxLoad;
   Map<String, List<Tank>> allTanks;
@@ -84,8 +86,9 @@ class _Load extends State<Load> with TickerProviderStateMixin {
       double capacitaNetta = (maxVesselLoading - lightshipWeight);
       vesselLoad = ((fixedAndLiquids / capacitaNetta) * 100).toStringAsFixed(2);
     });
-
-    // 5. Calcolo percentuale di riempimento
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.updateToReachMaxLoad(double.tryParse(toReachMaxLoad));
+    });
 
     // Risultati
     print(
